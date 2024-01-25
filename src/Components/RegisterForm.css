@@ -1,0 +1,98 @@
+.register-form-container {
+    background-color: #f4f4f4;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    padding: 25px;
+    max-width: 400px;
+    margin: 40px auto;
+    text-align: center;
+}
+
+.register-form-container h2 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.register-form-container input[type="email"],
+.register-form-container input[type="text"],
+.register-form-container input[type="password"] {
+    width: 90%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.password-container {
+    position: relative;
+}
+
+.eye-icon {
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.register-form-container button, .error-message {
+    width: 90%; /* El mismo ancho que los botones */
+    padding: 10px; /* El mismo padding que los botones */
+    margin-top: 20px; /* Espacio superior igual al de los botones */
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    cursor: pointer;
+    text-align: center; /* Alinea el texto al centro */
+}
+
+.register-form-container button {
+    background-color: #008CBA;
+    color: white;
+}
+
+.register-form-container button:hover {
+    background-color: #007B9E;
+}
+
+/* Estilo para el mensaje de error */
+.error-message {
+    color: red;
+    opacity: 0; /* Inicialmente oculto */
+    transition: opacity 1s ease-in-out; /* Suaviza la transición de la opacidad */
+    --notif-border-color: rgba(241, 51, 34, .71);
+    --notif-background-color: rgba(138, 18, 12, .9);
+    background: var(--notif-background-color);
+    border: 2px solid var(--notif-border-color);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px 0 rgba(0, 0, 0, .08);
+    color: #fff;
+    padding: 10px;
+    margin-left: 20px; /* Alinea el margen con los campos de entrada y botones */
+    text-align: center;
+    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px);
+    display: grid;
+    grid-template-columns: auto;
+    position: relative;
+    user-select: none;
+    box-sizing: border-box; /* Incluye el padding y el borde en el ancho */
+}
+
+/* Asegúrate de que el mensaje de error no ocupe espacio cuando esté oculto */
+.error-message:not(:empty) {
+    visibility: visible;
+    opacity: 1; /* Hace visible el mensaje cuando hay contenido */
+}
+
+.link-button-register {
+    display: block;
+    margin-top: 15px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.link-button-register:hover {
+    text-decoration: underline;
+}

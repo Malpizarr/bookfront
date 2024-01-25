@@ -1,0 +1,82 @@
+.navbar {
+    background-color: #333; /* Darker shade for elegance */
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* NavBar.css */
+.navbar-user-photo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+
+.navbar-brand {
+    font-size: 26px; /* Slightly larger for emphasis */
+    color: #ff6347; /* Brand color for distinction */
+    text-decoration: none;
+    font-weight: bold; /* Bold for prominence */
+}
+
+.navbar-links {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.navbar-item {
+    margin-left: 20px;
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    transition: color 0.3s ease;
+}
+
+.navbar-item:hover {
+    color: #ff6347; /* Consistent with brand color */
+    text-decoration: underline; /* Underline for hover state */
+}
+
+@media (min-width: 768px) {
+    .navbar-toggle {
+        display: none;
+    }
+    .navbar-links {
+        display: flex;
+    }
+}
+
+@media (max-width: 767px) {
+    .navbar-toggle {
+        display: inline-block;
+        margin-left: auto; /* Align to the right */
+    }
+    .navbar-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0; /* Cover entire width */
+        background-color: #333;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    .navbar-links.active {
+        display: flex;
+    }
+    .navbar-item {
+        margin: 10px 0; /* Spacing for mobile view */
+        text-align: center; /* Center align for mobile view */
+    }
+}

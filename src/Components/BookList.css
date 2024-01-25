@@ -1,0 +1,104 @@
+.book-list {
+    margin-top: 70px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+    background-color: #f4f4f4; /* Fondo del contenedor */
+    justify-content: center; /* Centrar los libros horizontalmente */
+    position: relative; /* Para posicionar el botón de logout */
+}
+
+.book-item {
+    cursor: pointer;
+    width: 150px; /* Ancho de la carcasa del libro */
+    height: 200px; /* Altura de la carcasa del libro */
+    background-color: #c0a080; /* Color base de la carcasa del libro */
+    border: 1px solid #b08968; /* Borde para definir la carcasa */
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3); /* Sombra para dar profundidad */
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+    padding: 10px;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.2) 1px, transparent 1px);
+    background-size: 20px 20px;
+    position: relative; /* Para la repisa */
+}
+
+.book-item::after {
+    content: '';
+    position: absolute;
+    bottom: -10px; /* Posición de la repisa respecto al libro */
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background-color: #654321; /* Color de la repisa */
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3); /* Sombra de la repisa */
+}
+
+.book-item-title {
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    padding: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+    margin-top: auto;
+    margin-bottom: 10px;
+}
+
+.new-book-form {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.new-book-form input {
+    padding: 10px;
+    margin-right: 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.new-book-form button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.logout-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    background-color: #ccc;
+    color: black;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8em;
+}
+
+.book-item input {
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 90%; /* Ajusta el ancho del input */
+}
+
+.book-item button {
+    padding: 5px 10px;
+    background-color: #ff6b6b;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}

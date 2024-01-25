@@ -1,0 +1,115 @@
+.landing-page {
+    font-family: 'Helvetica Neue', Arial, sans-serif; /* More modern font */
+    color: #333;
+    line-height: 1.6; /* Improved line spacing for readability */
+}
+
+.hero {
+    background-color: #007bff;
+    padding: 80px 20px; /* Responsive padding */
+    text-align: center;
+    color: white; /* Enhanced contrast for readability */
+}
+
+.hero-content {
+    max-width: 600px; /* More focused content area */
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hero-image {
+    width: 150px; /* More proportionate size */
+    height: 150px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+}
+
+.hero h1 {
+    font-size: 32px; /* Adjusted for balance */
+    margin-bottom: 15px;
+}
+
+.hero p {
+    font-size: 18px;
+    margin-bottom: 25px;
+}
+
+.button {
+    background-color: #dc3545;
+    color: #fff;
+    padding: 12px 25px; /* More clickable area */
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 16px;
+    margin: 5px; /* Uniform margin for spacing */
+    transition: background-color 0.2s; /* Smoother transition */
+}
+
+.button:hover {
+    background-color: #c82333;
+}
+
+.features {
+    background-color: #f8f9fa;
+    padding: 60px 20px; /* Uniform padding */
+}
+
+.feature-item {
+    max-width: 700px;
+    margin: 30px auto; /* Balanced spacing */
+    display: flex;
+    flex-direction: column; /* Stack elements on mobile */
+    align-items: center;
+    text-align: center;
+}
+
+@media (min-width: 768px) {
+    .feature-item {
+        flex-direction: row; /* Row layout on larger screens */
+        text-align: left;
+    }
+    .feature-image {
+        width: 250px; /* Adjusted for balance */
+        height: 250px;
+        margin-right: 20px;
+    }
+}
+
+.feature-item h2 {
+    font-size: 24px; /* Adjusted for hierarchy */
+    margin-bottom: 10px;
+}
+
+.feature-item p {
+    font-size: 16px; /* Adjusted for readability */
+}
+
+.testimonials {
+    background-color: #fff;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.testimonial-item {
+    max-width: 700px;
+    margin: 30px auto; /* Consistent spacing */
+    text-align: center; /* Centered for focus */
+}
+
+.testimonial-item p {
+    font-size: 16px; /* Consistent font sizing */
+    margin-bottom: 10px;
+}
+
+.testimonial-item span {
+    font-size: 16px; /* Consistent font sizing */
+    font-weight: bold;
+}
+
+@media (min-width: 768px) {
+    .testimonial-item {
+        text-align: left; /* Align left on larger screens */
+    }
+}
