@@ -38,6 +38,16 @@ function App() {
         const data = await response.json();
         console.log('Token refrescado:', data);
         setUser({ ...user, token: data.token });
+        if (!webSocket) {
+          const ws = new WebSocket('ws://localhost:8083', data.token);
+          ws.onopen = () => {
+            console.log('Conexión WebSocket establecida');
+            setWebSocket(ws); // Guarda la conexión en el contexto global
+          }
+        } else if (!user) {
+          webSocket.close();
+        }
+        
         // Configura cualquier otro estado o contexto basado en la respuesta
       } catch (error) {
         console.error('Error al refrescar el token:', error);
@@ -71,7 +81,6 @@ function App() {
           };
 
           setUser(userData);
-          console.log('Usuario autenticado:', userData.username);
 
           const ws = new WebSocket('ws://localhost:8083', userData.token);
           ws.onopen = () => {
@@ -171,14 +180,16 @@ function App() {
         username: decoded.username,
         email: decoded.email,
         token: loginData.token,
-        photoUrl: decoded.photoUrl
+        PhotoUrl: decoded.photoUrl
       };
 
 
       setUser(prevUser => ({ ...prevUser, ...userData }));
 
+      console.log('User:', userData.photoUrl);
 
-      const ws = new WebSocket('wss://chat.mangotree-fab2eccd.eastus.azurecontainerapps.io', loginData.token);
+
+      const ws = new WebSocket('ws://localhost:8083', loginData.token);
 
 
       ws.onopen = () => {

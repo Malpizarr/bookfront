@@ -47,17 +47,25 @@ function Chat({ webSocket, friendId, handleWebSocketMessage }) {
 
             setMessages([]);
 
+
+        if (webSocket) {
+            if (webSocket.readyState === WebSocket.OPEN) {
             webSocket.addEventListener('message', handleMessage);
+            } else {
+                webSocket.close();
+            }
 
             if (webSocket.readyState === WebSocket.OPEN) {
-                webSocket.send(JSON.stringify({ type: 'chatRequest', friendId}));
+                webSocket.send(JSON.stringify({type: 'chatRequest', friendId}));
             }
 
             return () => {
+                if (webSocket) {
                 webSocket.removeEventListener('message', handleMessage);
+                }
             };
-        }, [webSocket, friendId, page, isLoading]);
-
+        }
+    }, [webSocket, friendId, page, isLoading]);
 
 
     function groupMessagesByDate(messages) {
@@ -74,7 +82,7 @@ function Chat({ webSocket, friendId, handleWebSocketMessage }) {
     }
 
     const handleScroll = () => {
-        // Aquí puedes verificar si el usuario se ha desplazado hasta abajo
+        // verificar si el usuario se ha desplazado hasta abajo
         // y resetear el indicador de nuevos mensajes
         setHasNewMessages(false);
     };

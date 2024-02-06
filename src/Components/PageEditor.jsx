@@ -26,9 +26,8 @@ const [pageCache, setPageCache] = useState({}); // Nuevo estado para almacenar e
 
 
     useEffect(() => {
-        // Verifica si la página actual es mayor que el nuevo total de páginas
         if (currentPageNumber > totalPages) {
-            setCurrentPageNumber(Math.max(totalPages, 1)); // Ajusta a la última página o 1 si no hay páginas
+            setCurrentPageNumber(Math.max(totalPages, 1));
         }
     }, [totalPages, currentPageNumber]);
 
@@ -48,7 +47,6 @@ const [pageCache, setPageCache] = useState({}); // Nuevo estado para almacenar e
     }, [currentPageContent]);
 
     const saveContent = (pageNumber) => {
-        // Asegúrate de que quillRef.current no sea null
         if (quillRef.current) {
             const currentContent = quillRef.current.getEditor().root.innerHTML;
             handlePageUpdate(currentContent, pageNumber);
@@ -233,7 +231,7 @@ const [pageCache, setPageCache] = useState({}); // Nuevo estado para almacenar e
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+                    'Authorization': `Bearer ${user.token}`
                 },
                 body: JSON.stringify(newPage)
             });
@@ -279,7 +277,7 @@ const [pageCache, setPageCache] = useState({}); // Nuevo estado para almacenar e
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+                        'Authorization': `Bearer ${user.token}`
                     },
                     body: JSON.stringify({ content })
                 });
@@ -321,7 +319,7 @@ const [pageCache, setPageCache] = useState({}); // Nuevo estado para almacenar e
         try {
             const response = await fetch(`https://bookgateway.mangotree-fab2eccd.eastus.azurecontainerapps.io/books/${book._id}/deletePage/${currentPageNumber}`, {
                 method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt')}` }
+                headers: {'Authorization': `Bearer ${user.token}`}
             });
 
             if (!response.ok) {

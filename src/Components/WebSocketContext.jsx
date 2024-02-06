@@ -7,7 +7,6 @@ export const WebSocketContext = createContext(null);
 export const WebSocketProvider = ({ children }) => {
     const [webSocket, setWebSocket] = useState(null);
 
-    // Aquí puedes incluir cualquier lógica adicional relacionada con WebSocket
 
     return (
         <WebSocketContext.Provider value={{ webSocket, setWebSocket }}>

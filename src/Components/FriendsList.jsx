@@ -36,7 +36,7 @@ function FriendList({ onLogout }) {
         resetUnreadCount(friendId); // Restablecer en el estado local
 
         // Enviar solicitud al servidor para restablecer el contador
-        const jwt = localStorage.getItem('jwt');
+        const jwt = user.token;
         await fetch('https://bookgateway.mangotree-fab2eccd.eastus.azurecontainerapps.io/chat/reset-unread-messages', {
             method: 'POST',
             headers: {
@@ -65,7 +65,7 @@ function FriendList({ onLogout }) {
     useEffect(() => {
         const fetchUnreadMessages = async () => {
             // Asume que tienes una función para obtener el token JWT
-            const jwt = localStorage.getItem('jwt');
+            const jwt = user.token;
             const response = await fetch('https://bookgateway.mangotree-fab2eccd.eastus.azurecontainerapps.io/chat/unread-messages', {
                 headers: {
                     'Authorization': `Bearer ${jwt}`
@@ -110,18 +110,6 @@ function FriendList({ onLogout }) {
             }
         };
 
-        // Reconectar el WebSocket si se cierra
-        const reconnectWebSocket = () => {
-            if (!webSocket || webSocket.readyState === WebSocket.CLOSED) {
-                const newWebSocket = new WebSocket('ws://localhost:8083', localStorage.getItem('jwt'));
-                setWebSocket(newWebSocket);
-            }
-        };
-
-        if (!webSocket) {
-            reconnectWebSocket();
-            return;
-        }
 
         // Manejador para mensajes entrantes
         const handleMessage = (event) => {
@@ -133,24 +121,22 @@ function FriendList({ onLogout }) {
             requestFriendsList();
         };
 
-        // Manejador para el cierre de la conexión
-        const handleClose = () => {
-            setTimeout(reconnectWebSocket, 5000); // Intenta reconectar después de 5 segundos
-        };
-
-        webSocket.addEventListener('message', handleMessage);
-        webSocket.addEventListener('open', handleOpen);
-        webSocket.addEventListener('close', handleClose);
-
         // Solicitar lista de amigos inicialmente si el WebSocket está abierto
-        requestFriendsList();
 
+
+        if (webSocket) {
+            webSocket.addEventListener('message', handleMessage);
+            webSocket.addEventListener('open', handleOpen);
+        }
+
+        requestFriendsList();
         return () => {
-            webSocket.removeEventListener('message', handleMessage);
-            webSocket.removeEventListener('open', handleOpen);
-            webSocket.removeEventListener('close', handleClose);
+            if (webSocket) {
+                webSocket.removeEventListener('message', handleMessage);
+                webSocket.removeEventListener('open', handleOpen);
+            }
         };
-    }, [webSocket, friends]);
+    }, [webSocket, friends]); // Dependencia de useEffect
 
     const setupWebSocket = (webSocketInstance) => {
         // Asegura que no haya duplicidad en los event listeners
@@ -191,7 +177,7 @@ function FriendList({ onLogout }) {
 
     const fetchFriends = async () => {
         setIsLoading(true);
-        const jwt = localStorage.getItem('jwt');
+        const jwt = user.token;
 
         if (!jwt) {
             console.error('No se encontró el token JWT');

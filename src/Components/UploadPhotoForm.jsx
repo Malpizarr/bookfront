@@ -36,7 +36,6 @@ function UploadPhotoForm({ userId }) {
             if (response.ok) {
                 const data = await response.json();
                 alert('Foto subida con éxito: ' + data.photoUrl);
-                // Usa updateUser para actualizar la información del usuario
                 updateUser({ PhotoUrl: data.photoUrl });
             } else {
                 alert('Error al subir la foto.');

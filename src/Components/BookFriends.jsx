@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import {useUser} from './UserContext';
 
 function BookFriends() {
     const [friendBooks, setFriendBooks] = useState([]);
+    const {user} = useUser();
     
     useEffect(() => {
         const fetchAllFriendBooks = async () => {
-            const jwt = localStorage.getItem('jwt');
+            const jwt = user?.token;
             if (!jwt) {
                 console.error('No se encontró el token JWT');
                 return;
@@ -34,7 +36,7 @@ function BookFriends() {
                     <div key={book._id} className="book-item">
                         <div>{book.username}</div>
                         <div>{book.title}</div>
-                        {/* Agregar más detalles si lo deseas */}
+                        {/* Agregar más detalles si se desea */}
                     </div>
                 ))
             ) : (

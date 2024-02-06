@@ -28,7 +28,7 @@ function BookList({ onSelectBook, onLogout }) {
     const handleUpdateBook = async (e) => {
         e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
 
-        // Asegúrate de que ambas funciones sean async o manejen promesas correctamente
+        // ambas funciones sean async o manejen promesas correctamente
         await updateBookStatus(e); // Pasando el evento
         await updateBookTitle(e); // Pasando el evento
 
@@ -108,7 +108,7 @@ function BookList({ onSelectBook, onLogout }) {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
+                    'Authorization': `Bearer ${user.token}`,
                 },
                 body: JSON.stringify(updatedBook),
             });
@@ -186,7 +186,7 @@ function BookList({ onSelectBook, onLogout }) {
             const response = await fetch(`https://bookgateway.mangotree-fab2eccd.eastus.azurecontainerapps.io/books/delete/${bookId}`, {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
+                    'Authorization': `Bearer ${user.token}`,
                 },
             });
 
