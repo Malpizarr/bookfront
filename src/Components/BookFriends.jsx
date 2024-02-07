@@ -14,7 +14,7 @@ function BookFriends() {
             }
 
             try {
-                const response = await fetch(`https://bookgateway.mangotree-fab2eccd.eastus.azurecontainerapps.io/books/all-friends-books`, {
+                const response = await fetch(`http://localhost:8081/books/all-friends-books`, {
                     headers: { 'Authorization': `Bearer ${jwt}` }
                 });
                 const books = await response.json();

@@ -32,12 +32,12 @@ function LoginForm({ onLogin }) {
 
     const handleOAuthLogin = () => {
         // Redirecciona para la autenticación con Google
-        window.location.href = 'https://book.mangotree-fab2eccd.eastus.azurecontainerapps.io/oauth2/authorization/google';
+        window.location.href = 'http://localhost:8081/oauth2/authorization/google';
 
     };
 
     const handleFacebookLogin = () => {
-        window.location.href = 'https://book.mangotree-fab2eccd.eastus.azurecontainerapps.io/oauth2/authorization/facebook';
+        window.location.href = 'http://localhost:8081/oauth2/authorization/facebook';
     };
 
 

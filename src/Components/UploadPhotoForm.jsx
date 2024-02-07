@@ -25,7 +25,7 @@ function UploadPhotoForm({ userId }) {
         formData.append('file', selectedFile);
 
         try {
-            const response = await fetch(`https://bookgateway.mangotree-fab2eccd.eastus.azurecontainerapps.io/users/uploadPhoto/${userId}`, {
+            const response = await fetch(`http://localhost:8081/users/uploadPhoto/${userId}`, {
                 method: 'POST',
                 body: formData,
                 headers: {

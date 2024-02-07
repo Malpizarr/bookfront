@@ -4,10 +4,13 @@ import './FriendsList.css';
 import Navbar from "./NavBar";
 import { useWebSocket } from "./WebSocketContext";
 import Chat from "./Chat";
+import SearchUsers from "./SearchUsers";
 
 function FriendList({ onLogout }) {
+    const [view, setView] = useState('friends'); // 'friends' o 'pending'
     const [friends, setFriends] = useState([]);
     const [selectedFriendId, setSelectedFriendId] = useState(null);
+    const [pendingFriends, setPendingFriends] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const { user } = useUser();
     const { webSocket, setWebSocket } = useWebSocket();
@@ -28,8 +31,37 @@ function FriendList({ onLogout }) {
     };
 
     useEffect(() => {
+        if (view === 'friends') {
+            fetchFriends();
+        } else {
+            fetchPendingFriends();
+        }
+    }, [user, view]);
+
+    useEffect(() => {
         fetchFriends();
     }, [user]);
+
+    const fetchPendingFriends = async () => {
+        setIsLoading(true);
+        const jwt = user.token;
+        try {
+            const response = await fetch(`http://localhost:8081/api/friendships/pending`, {
+                headers: {
+                    'Authorization': `Bearer ${jwt}`
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Error al cargar solicitudes pendientes');
+            }
+            const data = await response.json();
+            setPendingFriends(data);
+        } catch (error) {
+            console.error('Error al obtener solicitudes pendientes:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const openChat = async (friendId) => {
         setSelectedFriendId(friendId);
@@ -37,7 +69,7 @@ function FriendList({ onLogout }) {
 
         // Enviar solicitud al servidor para restablecer el contador
         const jwt = user.token;
-        await fetch('https://bookgateway.mangotree-fab2eccd.eastus.azurecontainerapps.io/chat/reset-unread-messages', {
+        await fetch('http://localhost:8081/chat/reset-unread-messages', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${jwt}`,
@@ -66,7 +98,7 @@ function FriendList({ onLogout }) {
         const fetchUnreadMessages = async () => {
             // Asume que tienes una función para obtener el token JWT
             const jwt = user.token;
-            const response = await fetch('https://bookgateway.mangotree-fab2eccd.eastus.azurecontainerapps.io/chat/unread-messages', {
+            const response = await fetch('http://localhost:8081/chat/unread-messages', {
                 headers: {
                     'Authorization': `Bearer ${jwt}`
                 }
@@ -172,6 +204,39 @@ function FriendList({ onLogout }) {
         setFriends(updatedFriends);
     };
 
+    const sendFriendRequest = async (friendId) => {
+        console.log(user.id);
+        const jwt = user.token;
+        await fetch('http://localhost:8081/api/friendships/createfriendship', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${jwt}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({requesterId: user.id, friendId})
+        });
+        await fetchFriends();
+    };
+
+    const acceptFriendRequest = async (friendshipId) => {
+        const jwt = user.token;
+        const url = new URL('http://localhost:8081/api/friendships/accept');
+        url.searchParams.append('friendshipId', friendshipId); // Añade friendshipId como parámetro de consulta
+
+        await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${jwt}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        await fetchPendingFriends();
+    };
+
+
+
+
+
 
 
 
@@ -186,7 +251,7 @@ function FriendList({ onLogout }) {
         }
 
         try {
-            const response = await fetch(`https://bookgateway.mangotree-fab2eccd.eastus.azurecontainerapps.io/api/friendships/friends`, {
+            const response = await fetch(`http://localhost:8081/api/friendships/friends`, {
                 headers: {
                     'Authorization': `Bearer ${jwt}`
                 }
@@ -210,10 +275,14 @@ function FriendList({ onLogout }) {
         <>
             <Navbar/>
             <div className="friend-list">
+                <SearchUsers onSendFriendRequest={sendFriendRequest}/>
                 <button className="logout-button" onClick={onLogout}>Logout</button>
-                {isLoading ? (
-                    <div>Loading...</div>
-                ) : (
+                <div className="view-selector">
+                    <button onClick={() => setView('friends')}>Amigos</button>
+                    <button onClick={() => setView('pending')}>Solicitudes Pendientes</button>
+                </div>
+                {isLoading ?
+                    <div>Loading...</div> : view === 'friends' ? (
                     friends.map((friend) => (
                         <div className="friend-item" key={friend.id} onClick={() => openChat(friend.friendId)}>
                             <div className="friend-item-photo">
@@ -227,12 +296,35 @@ function FriendList({ onLogout }) {
                             <div className="friend-item-status">
                                 {friend.status}
                             </div>
+
                             {unreadCount[friend.friendId] > 0 && (
                                 <div className="unread-indicator">{unreadCount[friend.friendId]}</div>
                             )}
                         </div>
                     ))
-                )}
+                    ) : (
+                        pendingFriends.map((friend) => (
+                            <div key={friend.id} className="friend-item">
+                                <div className="friend-item-photo">
+                                    {friend.photoUrl && (
+                                        <img src={friend.photo} alt="User" className="friend-user-photo"/>
+                                    )}
+                                </div>
+                                <div className="friend-item-name">
+                                    {friend.friendUsername}
+                                </div>
+                                <div className="friend-item-status">
+                                    {friend.status}
+                                </div>
+                                {unreadCount[friend.friendId] > 0 && (
+                                    <div className="unread-indicator">{unreadCount[friend.friendId]}</div>
+                                )}
+                                {friend.requesterId !== user.id && (
+                                    <button onClick={() => acceptFriendRequest(friend.id)}>Accept</button>
+                                )}
+                            </div>
+                        )))
+                }
                 {selectedFriendId && (
                     <Chat
                         webSocket={webSocket}

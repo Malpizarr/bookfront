@@ -74,7 +74,7 @@ function BookNavigation({ bookId, onPageChange, onCreatePage, totalPages }) {
     };
 
     const fetchPageData = async (pageNumber) => {
-        const url = `https://bookgateway.mangotree-fab2eccd.eastus.azurecontainerapps.io/books/${bookId}/page/${pageNumber}`;
+        const url = `http://localhost:8081/books/${bookId}/page/${pageNumber}`;
         return fetch(url, {
             headers: { 'Authorization': `Bearer ${user.token}` }
         });

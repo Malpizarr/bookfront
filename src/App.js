@@ -36,8 +36,17 @@ function App() {
         if (!response.ok) throw new Error('No se pudo refrescar el token');
 
         const data = await response.json();
-        console.log('Token refrescado:', data);
-        setUser({ ...user, token: data.token });
+        const userinfo = jwtDecode(data.token)
+        setUser({
+          ...user,
+          token: data.token,
+          id: userinfo.sub,
+          username: userinfo.username,
+          email: userinfo.email,
+          photoUrl: userinfo.photoUrl
+        });
+
+        console.log('User:', user.id, user.username, user.email, user.token, user.photoUrl);
         if (!webSocket) {
           const ws = new WebSocket('ws://localhost:8083', data.token);
           ws.onopen = () => {
@@ -57,6 +66,26 @@ function App() {
 
     verificarUsuario();
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      console.log('User:', user.id, user.username, user.email, user.token, user.PhotoUrl);
+      const ws = new WebSocket('ws://localhost:8083', user.token);
+
+
+      ws.onopen = () => {
+        console.log('Conexión WebSocket establecida');
+        setWebSocket(ws); // Guarda la conexión en el contexto global
+      };
+
+      ws.onerror = (error) => {
+        console.error('Error en la conexión WebSocket:', error);
+      }
+
+
+    }
+  }, [user]);
+
 
 
 
@@ -184,23 +213,7 @@ function App() {
       };
 
 
-      setUser(prevUser => ({ ...prevUser, ...userData }));
-
-      console.log('User:', userData.photoUrl);
-
-
-      const ws = new WebSocket('ws://localhost:8083', loginData.token);
-
-
-      ws.onopen = () => {
-        console.log('Conexión WebSocket establecida');
-        setWebSocket(ws); // Guarda la conexión en el contexto global
-      };
-
-      ws.onerror = (error) => {
-        console.error('Error en la conexión WebSocket:', error);
-      }
-
+      setUser(userData);
 
     } catch (error) {
       console.error('Error de login:', error);

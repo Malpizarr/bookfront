@@ -50,7 +50,7 @@ function BookList({ onSelectBook, onLogout }) {
         }
 
         try {
-            const response = await fetch(`https://bookgateway.mangotree-fab2eccd.eastus.azurecontainerapps.io/books/all`, {
+            const response = await fetch(`http://localhost:8081/books/all`, {
                 headers: {
                     'Authorization': `Bearer ${jwt}`
                 }
@@ -104,7 +104,7 @@ function BookList({ onSelectBook, onLogout }) {
             console.log(bookToUpdate);
             const updatedBook = { ...bookToUpdate, title: newBookTitle };
 
-            const response = await fetch(`https://bookgateway.mangotree-fab2eccd.eastus.azurecontainerapps.io/books/update/${editingBookId}`, {
+            const response = await fetch(`http://localhost:8081/books/update/${editingBookId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -136,11 +136,11 @@ function BookList({ onSelectBook, onLogout }) {
             const bookToUpdate = books.find(book => book._id === editingBookId);
             const updatedBook = { ...bookToUpdate, status: newBookStatus };
 
-            const response = await fetch(`https://bookgateway.mangotree-fab2eccd.eastus.azurecontainerapps.io/books/update/${editingBookId}`, {
+            const response = await fetch(`http://localhost:8081/books/update/${editingBookId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+                    'Authorization': `Bearer ${user.token}`
                 },
                 body: JSON.stringify(updatedBook),
             });
@@ -161,11 +161,11 @@ function BookList({ onSelectBook, onLogout }) {
 
     const addNewBook = async () => {
         try {
-            const response = await fetch(`https://bookgateway.mangotree-fab2eccd.eastus.azurecontainerapps.io/books/create`, {
+            const response = await fetch(`http://localhost:8081/books/create`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
+                    'Authorization': `Bearer ${user.token}`,
                 },
                 body: JSON.stringify({ title: newBook }),
             });
@@ -183,7 +183,7 @@ function BookList({ onSelectBook, onLogout }) {
 
     const deleteBook = async (bookId) => {
         try {
-            const response = await fetch(`https://bookgateway.mangotree-fab2eccd.eastus.azurecontainerapps.io/books/delete/${bookId}`, {
+            const response = await fetch(`http://localhost:8081/books/delete/${bookId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${user.token}`,

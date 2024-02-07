@@ -171,7 +171,7 @@ const [pageCache, setPageCache] = useState({}); // Nuevo estado para almacenar e
 
     const fetchTotalPages = async () => {
         try {
-            const response = await fetch(`https://bookgateway.mangotree-fab2eccd.eastus.azurecontainerapps.io/books/${book._id}/pages`, {
+            const response = await fetch(`http://localhost:8081/books/${book._id}/pages`, {
                 headers: { 'Authorization': `Bearer ${user.token}` }
             });
             if (!response.ok) {
@@ -200,7 +200,7 @@ const [pageCache, setPageCache] = useState({}); // Nuevo estado para almacenar e
             setCurrentPageContent(cachedPage);
         } else {
             try {
-                const response = await fetch(`https://bookgateway.mangotree-fab2eccd.eastus.azurecontainerapps.io/books/${book._id}/page/${currentPageNumber}`, {
+                const response = await fetch(`http://localhost:8081/books/${book._id}/page/${currentPageNumber}`, {
                     headers: { 'Authorization': `Bearer ${user.token}` }
                 });
                 if (!response.ok) throw new Error('Error al cargar la página');
@@ -227,7 +227,7 @@ const [pageCache, setPageCache] = useState({}); // Nuevo estado para almacenar e
             const newPageNumber = currentPageNumber + 1;
             const newPage = { content: '', pageNumber: newPageNumber };
 
-            const response = await fetch(`https://bookgateway.mangotree-fab2eccd.eastus.azurecontainerapps.io/books/${book._id}/createPage`, {
+            const response = await fetch(`http://localhost:8081/books/${book._id}/createPage`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -250,7 +250,7 @@ const [pageCache, setPageCache] = useState({}); // Nuevo estado para almacenar e
 
     const reloadAllPages = async () => {
         try {
-            const response = await fetch(`https://bookgateway.mangotree-fab2eccd.eastus.azurecontainerapps.io/books/${book._id}/pages`, {
+            const response = await fetch(`http://localhost:8081/books/${book._id}/pages`, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt')}` }
             });
             if (!response.ok) {
@@ -273,7 +273,7 @@ const [pageCache, setPageCache] = useState({}); // Nuevo estado para almacenar e
     const handlePageUpdate = async (content, pageNumber) => {
         if (quillRef.current && pageNumber) {
             try {
-                const response = await fetch(`https://bookgateway.mangotree-fab2eccd.eastus.azurecontainerapps.io/books/${book._id}/updatePage/${pageNumber}`, {
+                const response = await fetch(`http://localhost:8081/books/${book._id}/updatePage/${pageNumber}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -317,7 +317,7 @@ const [pageCache, setPageCache] = useState({}); // Nuevo estado para almacenar e
 
     const handlePageDelete = async () => {
         try {
-            const response = await fetch(`https://bookgateway.mangotree-fab2eccd.eastus.azurecontainerapps.io/books/${book._id}/deletePage/${currentPageNumber}`, {
+            const response = await fetch(`http://localhost:8081/books/${book._id}/deletePage/${currentPageNumber}`, {
                 method: 'DELETE',
                 headers: {'Authorization': `Bearer ${user.token}`}
             });
