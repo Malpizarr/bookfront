@@ -1,6 +1,6 @@
 // Components/LoginForm.js
 import React, {useEffect, useState} from 'react';
-import './LoginForm.css';
+import '../Style/LoginForm.css';
 import { Link } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
@@ -39,10 +39,6 @@ function LoginForm({ onLogin }) {
     const handleFacebookLogin = () => {
         window.location.href = 'http://localhost:8081/oauth2/authorization/facebook';
     };
-
-
-
-
 
 
     return (

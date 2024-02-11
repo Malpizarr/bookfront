@@ -1,6 +1,6 @@
 // Components/RegisterForm.js
 import React, { useState, useEffect } from 'react';
-import './RegisterForm.css';
+import '../Style/RegisterForm.css';
 import { Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Importa íconos de FontAwesome
 

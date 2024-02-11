@@ -47,6 +47,13 @@
     font-size: 1em;
 }
 
+.login-form-login-button {
+    display: block;
+    margin-top: 15px;
+    color: #579a47;
+    text-decoration: none;
+}
+
 .login-form-container button:hover {
     background-color: #283826;
 }

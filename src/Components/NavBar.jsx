@@ -1,7 +1,7 @@
 // Navbar.js
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './NavBar.css';
+import '../Style/NavBar.css';
 import { useUser } from './UserContext';
 
 function Navbar() {
@@ -15,7 +15,9 @@ function Navbar() {
     return (
         <nav className="navbar">
             <div className="navbar-brand">
-                <Link to="/" className="navbar-brand">My Book App</Link>
+                <img className={"ShareSpace-logo"}
+                     src="/images/b396b856-0551-435d-a6ce-7f725894bd97-removebg-preview.png" alt={"logo"}/>
+                <Link to="/" className="navbar-brand">ShareSpace</Link>
                 <div className="navbar-toggle" onClick={handleToggleMenu}>
                     &#9776;
                 </div>
@@ -26,10 +28,10 @@ function Navbar() {
                         <>
 
                             <Link to="/books" className="navbar-item">Books</Link>
-                            <Link to="/editor" className="navbar-item">Editor</Link>
-                            <Link to="/books" className="navbar-item">
-                                {user.PhotoUrl && (
-                                    <img src={user.PhotoUrl} alt="User" className="navbar-user-photo"/>
+                            <Link to="/books" className="navbar-item"></Link>
+                            <Link to={`/profiles/${user.username}`} className="navbar-item">
+                                {user.photoUrl && (
+                                    <img src={user.photoUrl} alt="User" className="navbar-user-photo"/>
                                 )}
                             </Link>
                         </>

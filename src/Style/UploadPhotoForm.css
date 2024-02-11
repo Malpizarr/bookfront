@@ -1,0 +1,38 @@
+/* Estilo general del formulario */
+.upload-photo-form {
+    text-align: center; /* Centra el contenido del formulario */
+    margin: 20px auto; /* Margen superior e inferior con centrado horizontal */
+    padding: 20px; /* Espaciado interno para el formulario */
+    border-radius: 8px; /* Bordes redondeados para el formulario */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra sutil para dar profundidad */
+    background-color: #f8f9fa; /* Color de fondo claro */
+    max-width: 400px; /* Ancho máximo para el formulario */
+}
+
+/* Estilo para el input de tipo archivo */
+.upload-photo-form input[type="file"] {
+    margin: 10px 0; /* Margen arriba y abajo para separarlo de otros elementos */
+    width: calc(100% - 40px); /* Ancho completo menos el padding */
+    padding: 10px; /* Espaciado interno para el input */
+    border: 1px solid #ced4da; /* Borde sutil */
+    border-radius: 4px; /* Bordes redondeados */
+    cursor: pointer; /* Cambia el cursor para indicar que es seleccionable */
+    display: inline-block; /* Permite que el botón de cargar se muestre en la misma línea */
+}
+
+/* Estilo para el botón de enviar */
+.upload-photo-form button {
+    padding: 10px 20px; /* Espaciado interno para el botón */
+    background-color: #007bff; /* Color de fondo azul */
+    color: white; /* Texto en color blanco */
+    border: none; /* Sin bordes */
+    border-radius: 4px; /* Bordes redondeados */
+    cursor: pointer; /* Cambia el cursor para indicar que es clickeable */
+    margin-top: 10px; /* Margen superior para separarlo del input */
+    font-size: 16px; /* Tamaño de fuente para el texto dentro del botón */
+}
+
+/* Estilo para el botón de enviar al pasar el mouse */
+.upload-photo-form button:hover {
+    background-color: #0056b3; /* Color de fondo un poco más oscuro al pasar el mouse */
+}

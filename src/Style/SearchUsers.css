@@ -1,0 +1,80 @@
+/* Estilos generales del contenedor */
+.search-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+}
+
+.search-input {
+    padding: 10px 15px;
+    width: 100%;
+    max-width: 400px; /* Limita el ancho máximo */
+    border: 1px solid #ccc;
+    border-radius: 20px; /* Bordes redondeados */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+    transition: all 0.3s ease; /* Transición suave para efectos */
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #007bff; /* Cambia el color al enfocar */
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2); /* Sombra más pronunciada al enfocar */
+}
+
+.search-button {
+    padding: 10px 20px;
+    background-color: #007bff; /* Color de fondo */
+    color: #ffffff; /* Color de texto */
+    border: none;
+    border-radius: 20px; /* Bordes redondeados */
+    cursor: pointer; /* Cambia el cursor */
+    transition: background-color 0.3s ease; /* Transición suave para el fondo */
+}
+
+.search-button:hover {
+    background-color: #0056b3; /* Oscurece el botón al pasar el mouse */
+}
+
+
+.results-list {
+    list-style: none; /* Elimina los estilos predeterminados de lista */
+    padding: 0;
+    width: 100%;
+    max-width: 600px; /* Limita el ancho máximo */
+}
+
+.result-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee; /* Línea divisoria */
+    transition: background-color 0.3s ease; /* Transición suave para el fondo */
+}
+
+.result-item:hover {
+    background-color: #f8f9fa; /* Cambia el fondo al pasar el mouse */
+}
+
+.user-photo {
+    width: 50px; /* Tamaño fijo */
+    height: 50px; /* Tamaño fijo */
+    border-radius: 50%; /* Hace la imagen circular */
+    margin-right: 15px; /* Espacio a la derecha */
+    object-fit: cover; /* Asegura que la imagen cubra el espacio */
+}
+
+.add-friend-button {
+    margin-left: auto; /* Empuja el botón a la derecha */
+    padding: 5px 10px;
+    background-color: #28a745; /* Color de fondo */
+    color: #ffffff; /* Color de texto */
+    border: none;
+    border-radius: 15px; /* Bordes redondeados */
+    cursor: pointer; /* Cambia el cursor */
+}
+
+.add-friend-button:hover {
+    background-color: #218838; /* Oscurece el botón al pasar el mouse */
+}

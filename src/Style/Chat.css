@@ -1,0 +1,181 @@
+/* Chat.css */
+
+
+.scroll-to-bottom {
+    position: sticky; /* Asegura que el botón esté fijo en la pantalla */
+    bottom: 20px; /* Margen desde el fondo, ajusta según sea necesario */
+    right: 20px; /* Margen desde la derecha */
+    cursor: pointer; /* Cambia el cursor a tipo puntero */
+    opacity: 0.9; /* Opacidad inicial */
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease; /* Transiciones suaves */
+    z-index: 1000; /* Asegúrate de que el botón esté por encima de otros elementos */
+}
+
+
+.scroll-to-bottom:hover {
+    opacity: 1;
+}
+
+
+.chat-header {
+    position: sticky;
+    bottom: 0;
+    padding: 10px;
+    width: 300px;
+    top: 0;
+    display: flex;
+    background-color: #f0f0f0;
+    font-size: 1.2em;
+    border: 1px solid #282c34;
+}
+
+.chat-messages {
+    background-color: #E5DDD5;
+    padding: 15px 10px;
+    height: 490px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column-reverse;
+    border: 1px solid #282c34;
+}
+
+.friend-user-photo-chat {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.message-container {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 18px;
+    margin-left: auto;
+}
+
+.message-sent {
+    background-color: #0B93F6;
+    color: white;
+}
+
+.message-received {
+    background-color: #E5E5EA;
+    color: black;
+    margin-right: auto; /* Alinea los mensajes recibidos a la izquierda */
+}
+
+.chat-input {
+    position: sticky;
+    bottom: 0;
+    top: 0;
+    width: 300px;
+    overflow: hidden;
+    display: flex;
+    padding: 10px;
+    background-color: white;
+    border: 1px solid #282c34;
+}
+
+.chat-input input {
+    border-color: #282c34;
+    flex-grow: 1;
+    padding: 10px;
+    border-radius: 18px;
+    margin-right: 10px;
+}
+
+.chat-input button {
+    background-color: #0B93F6;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 18px;
+    cursor: pointer;
+}
+
+.message-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 60%; /* El tamaño de la burbuja fluctuará hasta un máximo del 60% del ancho del contenedor */
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 18px;
+}
+
+.message-sent {
+    align-self: flex-end;
+    background-color: #0B93F6;
+    color: white;
+    margin-left: 40%; /* Alinea los mensajes enviados a la derecha */
+}
+
+.message-received {
+    align-self: flex-start; /* Alinea los mensajes recibidos a la izquierda */
+    background-color: #E5E5EA;
+    color: black;
+    margin-right: 40%; /* Alinea los mensajes recibidos a la izquierda */
+}
+
+.timestamp {
+    align-self: flex-end;
+    font-size: 0.8em;
+    color: #777;
+}
+
+.message-sent .timestamp {
+    align-self: flex-end;
+}
+
+.message-received .timestamp {
+    align-self: flex-start;
+}
+
+.close-chat {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 5px;
+    background-color: #d0d0d0;
+    color: black;
+    border: 1px #ee0202;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8em;
+}
+
+.friend-user-photo-chat {
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    margin-right: 10px;
+}
+
+.friend-status {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.status-icon {
+    font-size: 10px;
+    margin-right: 5px;
+}
+
+.online {
+    color: #48f000;
+}
+
+.offline {
+    color: #ff0000;
+}
+
+.friend-username {
+    display: grid;
+    margin: 5px 10px 0 0;
+}
+
+
+.close-chat:hover {
+    color: #ff0000;
+    background-color: #9d9d9d;
+}

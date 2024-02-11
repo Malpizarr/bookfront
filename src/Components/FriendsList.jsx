@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useReducer, useRef, useState} from 'react';
 import { useUser } from './UserContext';
-import './FriendsList.css';
+import '../Style/FriendsList.css';
 import Navbar from "./NavBar";
 import { useWebSocket } from "./WebSocketContext";
 import Chat from "./Chat";
@@ -15,7 +15,9 @@ function FriendList({ onLogout }) {
     const { user } = useUser();
     const { webSocket, setWebSocket } = useWebSocket();
     const [unreadCount, setUnreadCount] = useState({});
-
+    const [friendsCache, setFriendsCache] = useState(null); // Estado para almacenar el caché de amigos
+    const [pendingFriendsCache, setPendingFriendsCache] = useState(null);
+    const [isChatVisible, setIsChatVisible] = useState(false);
     const incrementUnreadCount = (friendId) => {
         setUnreadCount(prevCount => ({
             ...prevCount,
@@ -30,17 +32,31 @@ function FriendList({ onLogout }) {
         }));
     };
 
+
     useEffect(() => {
         if (view === 'friends') {
-            fetchFriends();
+            if (friendsCache) {
+                setFriends(friendsCache);
+            } else {
+                fetchFriends();
+            }
         } else {
-            fetchPendingFriends();
+            if (pendingFriendsCache) {
+                setPendingFriends(pendingFriendsCache);
+            } else {
+                fetchPendingFriends();
+            }
         }
     }, [user, view]);
 
     useEffect(() => {
-        fetchFriends();
-    }, [user]);
+        // Intenta cargar la lista de amigos desde el caché primero
+        if (friendsCache) {
+            setFriends(friendsCache);
+        } else {
+            fetchFriends();
+        }
+    }, [user, friendsCache]);
 
     const fetchPendingFriends = async () => {
         setIsLoading(true);
@@ -55,6 +71,7 @@ function FriendList({ onLogout }) {
                 throw new Error('Error al cargar solicitudes pendientes');
             }
             const data = await response.json();
+            setPendingFriendsCache(data);
             setPendingFriends(data);
         } catch (error) {
             console.error('Error al obtener solicitudes pendientes:', error);
@@ -66,7 +83,8 @@ function FriendList({ onLogout }) {
     const openChat = async (friendId) => {
         setSelectedFriendId(friendId);
         resetUnreadCount(friendId); // Restablecer en el estado local
-
+        setIsChatVisible(true); // Mostrar el chat
+        console.log(isChatVisible);
         // Enviar solicitud al servidor para restablecer el contador
         const jwt = user.token;
         await fetch('http://localhost:8081/chat/reset-unread-messages', {
@@ -79,20 +97,12 @@ function FriendList({ onLogout }) {
         });
     };
 
-
-
-    const handleMessage = (event) => {
-        const message = JSON.parse(event.data);
-        if (message.type === 'friendsList') {
-            updateFriendsOnlineStatus(message.friends);
-        }
-
-        if (message.type === 'newUnreadMessage' && message.senderId !== selectedFriendId) {
-            incrementUnreadCount(message.senderId);
-        }
-
-        // Otros manejadores de mensajes
+    const closeChat = () => {
+        setIsChatVisible(false);
+        setSelectedFriendId(null); // Opcional, dependiendo de cómo desees manejar la lógica del chat
     };
+
+
 
     useEffect(() => {
         const fetchUnreadMessages = async () => {
@@ -122,28 +132,45 @@ function FriendList({ onLogout }) {
 
     const handleWebSocketMessage = (event) => {
         const message = JSON.parse(event.data);
-        if (message.type === 'friendsList') {
-            const updatedFriends = friends.map(friend => ({
-                ...friend,
-                status: message.friends.includes(friend.friendId) ? 'En línea' : 'Fuera de línea'
-            }));
-            setFriends(updatedFriends);
-        } else if (message.type === 'newUnreadMessage' && message.senderId !== user.id) {
-            incrementUnreadCount(message.senderId);
+
+        if (message.type !== 'friendsList') {
+            console.log('Mensaje:', message.type);
         }
-        // Otros manejadores de mensajes
+
+
+        switch (message.type) {
+            case 'friendsList':
+                updateFriendsOnlineStatus(message.friends);
+                break;
+            case 'newUnreadMessage':
+                if (message.senderId !== selectedFriendId) {
+                    incrementUnreadCount(message.senderId);
+                }
+                break;
+            case 'friendshipAccepted':
+                fetchFriends();
+                fetchPendingFriends();
+                webSocket.send(JSON.stringify({type: 'forcedUpdatelist', friendId: user.id}));
+                break;
+            case 'friendshipRequested':
+                fetchPendingFriends(); // Opcional: actualiza las solicitudes pendientes si es necesario
+                break;
+            case 'friendshipDeleted':
+                fetchFriends(); // Vuelve a buscar la lista de amigos para incluir el nuevo amigo
+                fetchPendingFriends(); // Opcional: actualiza las solicitudes pendientes si es necesario
+            // eslint-disable-next-line no-fallthrough
+            default:
+                console.log('Mensaje no reconocido:', message);
+        }
     };
 
     useEffect(() => {
-        // Función para solicitar datos a través del WebSocket
         const requestFriendsList = () => {
             if (webSocket && webSocket.readyState === WebSocket.OPEN) {
                 webSocket.send(JSON.stringify({ type: 'friendsListRequest' }));
             }
         };
 
-
-        // Manejador para mensajes entrantes
         const handleMessage = (event) => {
             handleWebSocketMessage(event);
         };
@@ -153,7 +180,6 @@ function FriendList({ onLogout }) {
             requestFriendsList();
         };
 
-        // Solicitar lista de amigos inicialmente si el WebSocket está abierto
 
 
         if (webSocket) {
@@ -170,39 +196,15 @@ function FriendList({ onLogout }) {
         };
     }, [webSocket, friends]); // Dependencia de useEffect
 
-    const setupWebSocket = (webSocketInstance) => {
-        // Asegura que no haya duplicidad en los event listeners
-        webSocketInstance.onmessage = null;
-        webSocketInstance.onerror = null;
-        webSocketInstance.onclose = null;
 
-
-
-        webSocketInstance.onmessage = handleMessage;
-
-        webSocketInstance.onerror = (event) => {
-            console.error('WebSocket error:', event);
-        };
-
-        webSocketInstance.onclose = (event) => {
-            console.log('WebSocket desconectado', event);
-            setWebSocket(null); // Asegúrate de reiniciar el WebSocket en el contexto
-        };
+    const updateFriendsOnlineStatus = (onlineFriendsIds) => {
+        // Actualiza el estado de manera inmutable
+        setFriends(prevFriends => prevFriends.map(friend => ({
+            ...friend,
+            status: onlineFriendsIds.includes(friend.friendId) ? 'En línea' : 'Fuera de línea'
+        })));
     };
 
-    const updateFriendsOnlineStatus = (onlineFriends) => {
-        const updatedFriends = friends.map(friend => {
-            const isOnline = onlineFriends.includes(friend.friendId);
-            const unreadMessages = unreadCount[friend.friendId] || 0;
-            return {
-                ...friend,
-                status: isOnline ? 'En línea' : 'Fuera de línea',
-                unreadMessages: unreadMessages
-            };
-        });
-
-        setFriends(updatedFriends);
-    };
 
     const sendFriendRequest = async (friendId) => {
         console.log(user.id);
@@ -216,9 +218,10 @@ function FriendList({ onLogout }) {
             body: JSON.stringify({requesterId: user.id, friendId})
         });
         await fetchFriends();
+        webSocket.send(JSON.stringify({type: 'friendRequest', userId: user.id, friendId: friendId}));
     };
 
-    const acceptFriendRequest = async (friendshipId) => {
+    const acceptFriendRequest = async (friendshipId, friendId) => {
         const jwt = user.token;
         const url = new URL('http://localhost:8081/api/friendships/accept');
         url.searchParams.append('friendshipId', friendshipId); // Añade friendshipId como parámetro de consulta
@@ -230,7 +233,7 @@ function FriendList({ onLogout }) {
                 'Content-Type': 'application/json'
             }
         });
-        await fetchPendingFriends();
+        webSocket.send(JSON.stringify({type: 'acceptedFriendRequest', userId: user.id, friendId: friendId}));
     };
 
 
@@ -242,72 +245,89 @@ function FriendList({ onLogout }) {
 
     const fetchFriends = async () => {
         setIsLoading(true);
-        const jwt = user.token;
-
-        if (!jwt) {
-            console.error('No se encontró el token JWT');
-            setIsLoading(false);
-            return;
-        }
 
         try {
             const response = await fetch(`http://localhost:8081/api/friendships/friends`, {
                 headers: {
-                    'Authorization': `Bearer ${jwt}`
+                    'Authorization': `Bearer ${user.token}`
                 }
             });
 
             if (!response.ok) {
-                throw new Error('Error al cargar amistades');
+                throw new Error('Error al cargar amigos');
             }
 
             const data = await response.json();
             setFriends(data);
+            setFriendsCache(data); // Actualiza el caché con los nuevos datos
         } catch (error) {
-            console.error('Error al obtener amistades:', error);
+            console.error('Error al obtener amigos:', error);
         } finally {
             setIsLoading(false);
         }
     };
 
 
+    const deleteFriend = async (Id, friendId) => {
+        const url = new URL('http://localhost:8081/api/friendships/deletefriendship');
+        url.searchParams.append('friendshipId', Id); // Añade friendshipId como parámetro de consulta
+        const jwt = user.token;
+        await fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${jwt}`,
+                'Content-Type': 'application/json'
+            },
+        });
+
+        webSocket.send(JSON.stringify({type: 'deletedFriend', userId: user.id, friendId: friendId}));
+        webSocket.send(JSON.stringify({type: 'forcedUpdatelist', userId: user.id, friendId: friendId}));
+    }
+
+
+
     return (
         <>
-            <Navbar/>
             <div className="friend-list">
+                <div className="friend-list-cont">
                 <SearchUsers onSendFriendRequest={sendFriendRequest}/>
-                <button className="logout-button" onClick={onLogout}>Logout</button>
                 <div className="view-selector">
                     <button onClick={() => setView('friends')}>Amigos</button>
                     <button onClick={() => setView('pending')}>Solicitudes Pendientes</button>
                 </div>
                 {isLoading ?
-                    <div>Loading...</div> : view === 'friends' ? (
-                    friends.map((friend) => (
-                        <div className="friend-item" key={friend.id} onClick={() => openChat(friend.friendId)}>
-                            <div className="friend-item-photo">
-                                {friend.photoUrl && (
-                                    <img src={friend.photoUrl} alt="User" className="friend-user-photo"/>
-                                )}
+                    <div className={"loading"}>Loading...</div> : view === 'friends' ? (
+                        friends.map((friend) => (
+                            <div className="friend-item" key={friend.id}>
+                                <div onClick={() => openChat(friend.friendId)} style={{cursor: 'pointer'}}>
+                                    <div className="friend-item-photo">
+                                        {friend.photoUrl && (
+                                            <img src={friend.photoUrl} alt="User" className="friend-user-photo"/>
+                                        )}
+                                    </div>
+                                    <div className="friend-item-name">
+                                        {friend.friendUsername}
+                                    </div>
+                                    <div className="friend-item-status">
+                                        {friend.status}
+                                    </div>
+                                    {unreadCount[friend.friendId] > 0 && (
+                                        <div className="unread-indicator">{unreadCount[friend.friendId]}</div>
+                                    )}
+                                </div>
+                                <button onClick={(e) => {
+                                    e.stopPropagation();
+                                    deleteFriend(friend.id, friend.friendId);
+                                }}>Eliminar
+                                </button>
                             </div>
-                            <div className="friend-item-name">
-                                {friend.friendUsername}
-                            </div>
-                            <div className="friend-item-status">
-                                {friend.status}
-                            </div>
-
-                            {unreadCount[friend.friendId] > 0 && (
-                                <div className="unread-indicator">{unreadCount[friend.friendId]}</div>
-                            )}
-                        </div>
-                    ))
+                        ))
                     ) : (
                         pendingFriends.map((friend) => (
                             <div key={friend.id} className="friend-item">
                                 <div className="friend-item-photo">
                                     {friend.photoUrl && (
-                                        <img src={friend.photo} alt="User" className="friend-user-photo"/>
+                                        <img src={friend.photoUrl} alt="User" className="friend-user-photo"/>
                                     )}
                                 </div>
                                 <div className="friend-item-name">
@@ -320,19 +340,34 @@ function FriendList({ onLogout }) {
                                     <div className="unread-indicator">{unreadCount[friend.friendId]}</div>
                                 )}
                                 {friend.requesterId !== user.id && (
-                                    <button onClick={() => acceptFriendRequest(friend.id)}>Accept</button>
+                                    <button
+                                        onClick={() => acceptFriendRequest(friend.id, friend.friendId)}>Accept</button>
                                 )}
+
+                                <button onClick={(e) => {
+                                    e.stopPropagation();
+                                    deleteFriend(friend.id, friend.friendId);
+                                }}>Eliminar
+                                </button>
                             </div>
                         )))
                 }
-                {selectedFriendId && (
-                    <Chat
-                        webSocket={webSocket}
-                        friendId={selectedFriendId}
-                        handleWebSocketMessage={handleWebSocketMessage}
-                    />
+                </div>
+                {isChatVisible && selectedFriendId && (
+                    <div className={`chat-container`}>
+                        <Chat
+                            webSocket={webSocket}
+                            friendId={selectedFriendId}
+                            handleWebSocketMessage={handleWebSocketMessage}
+                            onClose={closeChat} // Pasar la función closeChat al componente Chat
+                            friendUsername={friends.find(f => f.friendId === selectedFriendId)?.friendUsername}
+                            friendPhotoUrl={friends.find(f => f.friendId === selectedFriendId)?.photoUrl}
+                            friendStatus={friends.find(f => f.friendId === selectedFriendId)?.status}
+                        />
+                    </div>
                 )}
             </div>
+
         </>
     );
 }

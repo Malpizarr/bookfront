@@ -1,19 +1,17 @@
 import React, { useState } from 'react';
 import {jwtDecode} from "jwt-decode";
 import {useUser} from "./UserContext";
+import "../Style/UploadPhotoForm.css";
 
 function UploadPhotoForm({ userId }) {
     const [selectedFile, setSelectedFile] = useState(null);
-    const { updateUser } = useUser();
+    const {user, setUser} = useUser();
 
     const handleFileChange = (event) => {
         setSelectedFile(event.target.files[0]);
     };
 
     const handleSubmit = async (event) => {
-        const jwt = localStorage.getItem('jwt');
-        const decoded = jwtDecode(jwt);
-        const userId = decoded.sub;
 
         event.preventDefault();
         if (!selectedFile) {
@@ -24,19 +22,23 @@ function UploadPhotoForm({ userId }) {
         const formData = new FormData();
         formData.append('file', selectedFile);
 
+        console.log('formData:', formData);
+
+        console.log('token:', user.token);
+
         try {
             const response = await fetch(`http://localhost:8081/users/uploadPhoto/${userId}`, {
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
+                    'Authorization': `Bearer ${user.token}`,
                 },
             });
 
             if (response.ok) {
                 const data = await response.json();
                 alert('Foto subida con éxito: ' + data.photoUrl);
-                updateUser({ PhotoUrl: data.photoUrl });
+                setUser({...user, photoUrl: data.photoUrl});
             } else {
                 alert('Error al subir la foto.');
             }
@@ -47,7 +49,7 @@ function UploadPhotoForm({ userId }) {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="upload-photo-form">
             <input type="file" onChange={handleFileChange} />
             <button type="submit">Subir Foto</button>
         </form>

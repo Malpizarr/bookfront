@@ -1,0 +1,130 @@
+.profile-container {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.profile-container h2 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-weight: bold;
+    color: #666;
+    margin-bottom: 8px; /* Espacio entre la etiqueta y el campo de entrada */
+}
+
+.form-control {
+    width: calc(100% - 20px); /* Resta el padding a cada lado */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 0 auto; /* Centra los campos de entrada */
+}
+
+.button-form {
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    margin: 20px auto; /* Centra el botón y agrega espacio en la parte superior */
+    display: block; /* Asegura que el botón se trate como un bloque para aplicar margen automático */
+}
+
+.button-form:hover {
+    background-color: #0056b3;
+}
+
+.change-password-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.change-password-form .form-group {
+    margin-bottom: 10px;
+}
+
+.change-password-form .form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.change-password-form .form-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.change-password-form button {
+    margin-top: 10px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.change-password-form button[type="submit"] {
+    background-color: #007bff;
+    color: white;
+}
+
+.change-password-form button[type="button"] {
+    margin-left: 10px;
+    background-color: #dc3545;
+    color: white;
+}
+
+
+.profile-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    margin-top: 20px; /* Espacio encima del botón */
+    padding: 10px 20px; /* Más espacio en el botón */
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.user-photo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    display: inline-block; /* Permite que la imagen se centre como texto/elementos en línea */
+}
+
+.profile-info p {
+    color: #333;
+    margin: 10px 0; /* Espaciado uniforme alrededor de los párrafos */
+}
+
+.page-editor-buttons {
+    display: flex;
+    justify-content: center; /* Centra los botones en lugar de alinearlos a la derecha */
+    gap: 15px;
+    margin-bottom: 20px; /* Espacio debajo de los botones antes del formulario */
+}
+
+

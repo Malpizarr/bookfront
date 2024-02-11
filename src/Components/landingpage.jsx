@@ -1,7 +1,7 @@
 import React from 'react';
 import { useUser } from './UserContext';
 import { Link } from 'react-router-dom';
-import './landingpage.css';
+import '../Style/landingpage.css';
 import Navbar from "./NavBar";
 
 function LandingPage() {
@@ -16,11 +16,11 @@ function LandingPage() {
                         <img src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5" alt="Books" className="hero-image"/>
                         <h1>Create, Edit, and Manage Your Books with Ease</h1>
                         <p>Our book editor app provides an intuitive and user-friendly interface for creating, editing, and managing your books. Whether you're a seasoned author or just starting out, our app has everything you need to bring your ideas to life.</p>
-                        {user ? (
+                        {user && (
                             <Link to="/books" className="button">
                                 Go to My Books
                             </Link>
-                        ) : (
+                        )} {!user && (
                             <>
                                 <Link to="/register" className="button">
                                     Sign Up

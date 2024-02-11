@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useUser } from './UserContext';
-import './BookList.css';
+import '../Style/BookList.css';
 import Navbar from "./NavBar";
 import FriendList from "./FriendsList";
 import BookFriends from "./BookFriends";
 import UploadPhotoForm from "./UploadPhotoForm";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faEnvelope} from '@fortawesome/free-solid-svg-icons';
 
 function BookList({ onSelectBook, onLogout }) {
     const [books, setBooks] = useState([]);
@@ -13,6 +15,9 @@ function BookList({ onSelectBook, onLogout }) {
     const [newBookTitle, setNewBookTitle] = useState("");
     const [newBookStatus, setNewBookStatus] = useState("");
     const { user } = useUser();
+    const [isFriendListVisible, setIsFriendListVisible] = useState(false);
+    const [isLoading, setIsloading] = useState(false);
+
 
 
 
@@ -26,22 +31,38 @@ function BookList({ onSelectBook, onLogout }) {
 
 
     const handleUpdateBook = async (e) => {
-        e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+        e.preventDefault();
+        try {
+            const bookToUpdate = books.find(book => book._id === editingBookId);
+            const updatedBook = {
+                ...bookToUpdate,
+                title: newBookTitle,
+                status: newBookStatus
+            };
 
-        // ambas funciones sean async o manejen promesas correctamente
-        await updateBookStatus(e); // Pasando el evento
-        await updateBookTitle(e); // Pasando el evento
+            const response = await fetch(`http://localhost:8081/books/update/${editingBookId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                },
+                body: JSON.stringify(updatedBook),
+            });
 
-        // Restablece el estado de edición
-        setEditingBookId(null);
+            if (!response.ok) {
+                throw new Error('Error al actualizar el libro');
+            }
+
+            // Actualiza el estado de los libros en el cliente
+            setBooks(books.map(book => book._id === editingBookId ? updatedBook : book));
+            setEditingBookId(null); // Finaliza la edición
+        } catch (error) {
+            console.error('Error al actualizar el libro:', error);
+        }
     };
 
-
-
-
-
-
     const fetchBooks = async () => {
+        setIsloading(true);
         if (!user) return;
         const jwt = user.token;
         if (!jwt) {
@@ -64,6 +85,8 @@ function BookList({ onSelectBook, onLogout }) {
             setBooks(data);
         } catch (error) {
             console.error('Error al obtener libros:', error);
+        } finally {
+            setIsloading(false);
         }
     };
 
@@ -98,65 +121,11 @@ function BookList({ onSelectBook, onLogout }) {
     };
 
 
-    const updateBookTitle = async () => {
-        try {
-            const bookToUpdate = books.find(book => book._id === editingBookId);
-            console.log(bookToUpdate);
-            const updatedBook = { ...bookToUpdate, title: newBookTitle };
-
-            const response = await fetch(`http://localhost:8081/books/update/${editingBookId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${user.token}`,
-                },
-                body: JSON.stringify(updatedBook),
-            });
-
-            if (!response.ok) {
-                throw new Error('Error al actualizar el libro');
-            }
-
-            setBooks(books.map(book => book._id === editingBookId ? updatedBook : book));
-            setEditingBookId(null);
-        } catch (error) {
-            console.error('Error al actualizar el libro:', error);
-        }
-    };
 
     // Manejo del cambio de estado del libro
     const handleStatusChange = (e) => {
-        e.stopPropagation();
         setNewBookStatus(e.target.value);
     };
-
-    const updateBookStatus = async (e) => {
-        e.preventDefault();
-        try {
-            const bookToUpdate = books.find(book => book._id === editingBookId);
-            const updatedBook = { ...bookToUpdate, status: newBookStatus };
-
-            const response = await fetch(`http://localhost:8081/books/update/${editingBookId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${user.token}`
-                },
-                body: JSON.stringify(updatedBook),
-            });
-
-            if (!response.ok) {
-                throw new Error('Error al actualizar el libro');
-            }
-
-            // Actualizar el estado de los libros en el cliente
-            setBooks(books.map(book => book._id === editingBookId ? updatedBook : book));
-            setEditingBookId(null);
-        } catch (error) {
-            console.error('Error al actualizar el libro:', error);
-        }
-    };
-
 
 
     const addNewBook = async () => {
@@ -200,62 +169,76 @@ function BookList({ onSelectBook, onLogout }) {
         }
     };
 
+
     return (
         <>
             <Navbar/>
-        <div className="book-list">
-            <div className="new-book-form">
-                <input
-                    type="text"
-                    value={newBook}
-                    onChange={(e) => setNewBook(e.target.value)}
-                    placeholder="Título del nuevo libro"
-                />
-                <button onClick={addNewBook}>Agregar Libro</button>
-            </div>
-
-            <button className="logout-button" onClick={onLogout}>Logout</button>
-            <FriendList onLogout={onLogout}/>
-            <BookFriends/>
-            <UploadPhotoForm userId={user.username}/>
-            {books.map((book) => (
-                <div className="book-item" key={book._id}>
-                    {editingBookId === book._id ? (
-                        // Formulario de edición
-                        <form onSubmit={handleUpdateBook
-                        }>
-                            <select value={newBookStatus} onChange={handleStatusChange}>
-                                <option value="Public">Public</option>
-                                <option value="Private">Private</option>
-                            </select>
-                            <input
-                                type="text"
-                                value={newBookTitle}
-                                onChange={handleTitleChange}
-                                autoFocus
-                            />
-                            <button type="submit">Actualizar</button>
-                            <button onClick={() => setEditingBookId(null)}>Cancelar</button>
-                        </form>
-                    ) : (
-                        <>
-                            <div onClick={() => selectBook(book)} className="book-item-details">
-                                <div className="book-item-title">{book.title}</div>
-                                <div className="book-item-status">{book.status}</div>
-                            </div>
-                            <button onClick={() => {
-                                setEditingBookId(book._id);
-                                setNewBookTitle(book.title);
-                                setNewBookStatus(book.status);
-                            }}>Editar</button>
-                        </>
-                    )}
-                    <button onClick={() => deleteBook(book._id)}>Eliminar</button>
+            <div className="book-list">
+                <div className="new-book-form">
+                    <input
+                        type="text"
+                        value={newBook}
+                        onChange={(e) => setNewBook(e.target.value)}
+                        placeholder="Título del nuevo libro"
+                    />
+                    <button onClick={addNewBook}>Agregar Libro</button>
                 </div>
-            ))}
-        </div>
+
+                <button className="logout-button" onClick={onLogout}>Logout</button>
+                <BookFriends onSelectBook={onSelectBook}/>
+
+                {isLoading ? (
+                    <div className="loading-container-books">
+                        <div className="spinner-books"></div>
+                        <div className="loading-message-books">Loading books...</div>
+                    </div>
+                ) : (
+                    books.map((book) => (
+                        <div className="book-item" key={book._id}>
+                            {editingBookId === book._id ? (
+                                <form onSubmit={handleUpdateBook}>
+                                    <select value={newBookStatus} onChange={handleStatusChange}>
+                                        <option value="Public">Public</option>
+                                        <option value="Private">Private</option>
+                                    </select>
+                                    <input
+                                        type="text"
+                                        value={newBookTitle}
+                                        onChange={handleTitleChange}
+                                        autoFocus
+                                    />
+                                    <button type="submit">Actualizar</button>
+                                    <button onClick={() => setEditingBookId(null)}>Cancelar</button>
+                                </form>
+                            ) : (
+                                <>
+                                    <div onClick={() => selectBook(book)} className="book-item-details">
+                                        <div className="book-item-title">{book.title}</div>
+                                        <div className="book-item-status">{book.status}</div>
+                                    </div>
+                                    <button onClick={() => {
+                                        setEditingBookId(book._id);
+                                        setNewBookTitle(book.title);
+                                        setNewBookStatus(book.status);
+                                    }}>Editar
+                                    </button>
+                                </>
+                            )}
+                            <button onClick={() => deleteBook(book._id)}>Eliminar</button>
+                        </div>
+                    ))
+                )}
+            </div>
+            <div className={`friend-list ${isFriendListVisible ? 'visible' : 'hidden'}`}
+                 style={{transform: isFriendListVisible ? 'scale(1)' : 'scale(0)'}}>
+                <FriendList onLogout={onLogout}/>
+            </div>
+            <button onClick={() => setIsFriendListVisible(!isFriendListVisible)} className="friend-list-button">
+                <FontAwesomeIcon icon={faEnvelope}/>
+            </button>
         </>
     );
 }
+
 
 export default BookList;

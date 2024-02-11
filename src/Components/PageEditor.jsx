@@ -4,13 +4,19 @@ import BookNavigation from './BookNavigation';
 import ReactQuill, { Quill } from 'react-quill';
 import ImageResize from 'quill-image-resize-module-react';
 import 'react-quill/dist/quill.snow.css';
-import './PageEditor.css';
+import '../Style/PageEditor.css';
 import Navbar from "./NavBar";
+import {useParams} from "react-router-dom";
+import DOMPurify from 'dompurify';
+import {filterXSS} from 'xss';
+
+
 
 
 Quill.register('modules/imageResize', ImageResize);
 
-function PageEditor({ book, onLogout, onBack }) {
+
+function PageEditor({onLogout, onBack}) {
     const [currentPageContent, setCurrentPageContent] = useState('');
     const [currentPage, setCurrentPage] = useState({ content: '' });
     const [currentPageNumber, setCurrentPageNumber] = useState(1);
@@ -21,15 +27,67 @@ function PageEditor({ book, onLogout, onBack }) {
     const [saveStatus, setSaveStatus] = useState('guardado'); // Puede ser 'guardado', 'noGuardado', 'guardando'
     const quillRef = useRef(null);
     const [autoSaveNeeded, setAutoSaveNeeded] = useState(false); // Nuevo estado para indicar si el autoguardado es necesario
-const [pageCache, setPageCache] = useState({}); // Nuevo estado para almacenar en caché las páginas cargadas
-
-
+    const [book, setBook] = useState(null);
+    const [pageCache, setPageCache] = useState({}); // Nuevo estado para almacenar en caché las páginas cargadas
+    const [isOwner, setIsOwner] = useState(false);
+    const {bookId} = useParams();
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [isPrivate, setIsPrivate] = useState(false);
 
     useEffect(() => {
         if (currentPageNumber > totalPages) {
             setCurrentPageNumber(Math.max(totalPages, 1));
         }
     }, [totalPages, currentPageNumber]);
+
+
+    const fetchBook = async () => {
+        let response;
+        try {
+            setIsLoading(true);
+
+            // Elige el método apropiado basado en la presencia del token
+            const options = user.token ? {headers: {'Authorization': `Bearer ${user.token}`}} : {
+                method: 'GET',
+                credentials: 'include'
+            };
+            response = await fetch(`http://localhost:8081/books/${bookId}`, options);
+
+            if (!response.ok) {
+                if (response.status === 403 || response.status === 401) {
+                    // Si el servidor responde con un estado 403 Forbidden o 401 Unauthorized,
+                    // maneja específicamente este caso como un libro privado al que el usuario no tiene acceso
+                    setIsPrivate(true);
+                    setIsOwner(false);
+                    throw new Error('Este libro es privado y no tienes acceso.');
+                } else {
+                    // Para otros tipos de errores, simplemente notifica que no se pudieron obtener los detalles del libro
+                    throw new Error('Failed to fetch book details');
+                }
+            }
+
+            const bookData = await response.json();
+            setBook(bookData);
+
+            // Verifica si el usuario es el propietario del libro (esto depende de cómo esté estructurado tu objeto bookData)
+            const isUserOwner = user.id && bookData.userId && bookData.userId === user.id;
+            setIsOwner(isUserOwner);
+
+            // Configura isPrivate basado en el estado del libro y si el usuario es el propietario
+            setIsPrivate(bookData.status === 'Private' && !isUserOwner);
+        } catch (err) {
+            setError(err.message);
+            // Aquí también podrías establecer estados adicionales para mostrar mensajes específicos en la UI si es necesario
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+
+    useEffect(() => {
+        fetchBook();
+    }, [bookId, user.token, user.id]);
 
     const handleKeyPress = (e) => {
         if ((e.ctrlKey && e.key === 's') || (e.ctrlKey && e.key === 'S') || (e.metaKey && e.key === 's') ) {
@@ -70,19 +128,24 @@ const [pageCache, setPageCache] = useState({}); // Nuevo estado para almacenar e
 
     const modules = {
         toolbar: [
-            [{ header: '1' }, { header: '2' }, { font: [] }],
-            [{ size: [] }],
-            ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-            [
-                { list: 'ordered' },
-                { list: 'bullet' },
-                { indent: '-1' },
-                { indent: '+1' }
-            ],
-            [{align: []}],
-            [{color: []}],
-            ['link', 'image', 'video'],
-            ['clean']
+            ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+            ['blockquote', 'code-block'],
+
+            [{'header': 1}, {'header': 2}],               // custom button values
+            [{'list': 'ordered'}, {'list': 'bullet'}],
+            [{'script': 'sub'}, {'script': 'super'}],      // superscript/subscript
+            [{'indent': '-1'}, {'indent': '+1'}],          // outdent/indent
+            [{'direction': 'rtl'}],                         // text direction
+
+            [{'size': ['small', false, 'large', 'huge']}],  // custom dropdown
+            [{'header': [1, 2, 3, 4, 5, 6, false]}],
+
+            [{'color': []}, {'background': []}],          // dropdown with defaults from theme
+            [{'font': []}],
+            [{'align': []}],
+            ['link', 'image', 'video'], // Enlace e imagen y video
+            ['clean']                                         // remove formatting button
+
         ],
         clipboard: {
             matchVisual: false
@@ -160,26 +223,42 @@ const [pageCache, setPageCache] = useState({}); // Nuevo estado para almacenar e
 
 
     const handleContentChange = (content, delta, source, editor) => {
+        if (isOwner) {
         const formattedContent = editor.getHTML();
         setCurrentPageContent(formattedContent);
         setIsContentChanged(true);
         setSaveStatus('noGuardado');
+        }
     };
 
 
 
 
     const fetchTotalPages = async () => {
+        let response;
+
         try {
-            const response = await fetch(`http://localhost:8081/books/${book._id}/pages`, {
-                headers: { 'Authorization': `Bearer ${user.token}` }
-            });
+            if (!user.token) {
+                // Si no hay token, hace la petición con las cookies incluidas
+                response = await fetch(`http://localhost:8081/books/${bookId}/pages`, {
+                    method: 'GET', // Asumiendo que es una operación de obtención
+                    credentials: 'include', // Necesario para incluir cookies en la petición
+                });
+            } else {
+                // Si hay token, lo incluye en el encabezado de autorización
+                response = await fetch(`http://localhost:8081/books/${bookId}/pages`, {
+                    headers: {'Authorization': `Bearer ${user.token}`},
+                });
+            }
+
             if (!response.ok) {
                 throw new Error('Error al obtener el recuento de páginas');
             }
+
             const pages = await response.json();
             setTotalPages(pages.length);
-            // Si la página actual ya no existe, ajustar currentPageNumber
+
+            // La siguiente línea se ha movido al final para asegurarse de que se utiliza el valor actualizado de totalPages
             if (currentPageNumber > totalPages) {
                 setCurrentPageNumber(Math.max(totalPages, 1));
             }
@@ -190,6 +269,7 @@ const [pageCache, setPageCache] = useState({}); // Nuevo estado para almacenar e
             console.error('Error al obtener el recuento de páginas:', error);
         }
     };
+
     const fetchCurrentPage = async () => {
         if (!book || typeof book._id === 'undefined') return;
 
@@ -200,7 +280,7 @@ const [pageCache, setPageCache] = useState({}); // Nuevo estado para almacenar e
             setCurrentPageContent(cachedPage);
         } else {
             try {
-                const response = await fetch(`http://localhost:8081/books/${book._id}/page/${currentPageNumber}`, {
+                const response = await fetch(`http://localhost:8081/books/${bookId}/page/${currentPageNumber}`, {
                     headers: { 'Authorization': `Bearer ${user.token}` }
                 });
                 if (!response.ok) throw new Error('Error al cargar la página');
@@ -227,7 +307,7 @@ const [pageCache, setPageCache] = useState({}); // Nuevo estado para almacenar e
             const newPageNumber = currentPageNumber + 1;
             const newPage = { content: '', pageNumber: newPageNumber };
 
-            const response = await fetch(`http://localhost:8081/books/${book._id}/createPage`, {
+            const response = await fetch(`http://localhost:8081/books/${bookId}/createPage`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -244,27 +324,6 @@ const [pageCache, setPageCache] = useState({}); // Nuevo estado para almacenar e
             await fetchTotalPages();
         } catch (error) {
             console.error('Error al crear nueva página:', error);
-        }
-    };
-
-
-    const reloadAllPages = async () => {
-        try {
-            const response = await fetch(`http://localhost:8081/books/${book._id}/pages`, {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt')}` }
-            });
-            if (!response.ok) {
-                throw new Error('Error al recargar las páginas');
-            }
-            const pages = await response.json();
-            let newCache = {};
-            pages.forEach(page => {
-                newCache[page.pageNumber] = page;
-            });
-            setPageCache(newCache);
-            setTotalPages(pages.length);
-        } catch (error) {
-            console.error('Error al recargar las páginas:', error);
         }
     };
 
@@ -338,14 +397,53 @@ const [pageCache, setPageCache] = useState({}); // Nuevo estado para almacenar e
     };
 
 
+    if (isLoading) {
+        return (
+            <div className="loading-container">
+                <div className="spinner"></div>
+                <div className="loading-message">Loading book details...</div>
+            </div>
+        );
+    }
+
+
+    if (error || (isPrivate && !isOwner)) {
+        let errorMessage = error || "Este libro es privado y solo accesible por el propietario.";
+        return (
+            <div className="error-container">
+                <div className="error-message">{errorMessage}</div>
+                <div className="page-editor-buttons">
+                    <button onClick={onBack} className="page-editor-button">Atrás</button>
+                </div>
+            </div>
+        );
+    }
+
+    if (!book) {
+        return (
+            <div className="error-container">
+                <div className="error-message">No book found</div>
+            </div>
+        );
+    }
+
+
+
 
 
     return (
         <>
             <Navbar />
         <div className="page-editor-container">
+
             <div className="page-editor-header">
+                {isOwner && !isLoading &&
                 <h2>Editando libro: {book.title}</h2>
+                }
+                {!isOwner &&
+                    <h2>Viendo libro: {book.title}</h2>
+                }
+                {isOwner &&
                 <div className="save-status">
                     {saveStatus === 'noGuardadoEdit' &&
                         <span className="save-status-text">No guardado</span>
@@ -366,6 +464,7 @@ const [pageCache, setPageCache] = useState({}); // Nuevo estado para almacenar e
                         <span className="save-status-text">Error al guardar</span>
                     }
                 </div>
+                }
                 <div className="page-editor-buttons">
                     <button onClick={onLogout} className="page-editor-button">Logout</button>
                     <button onClick={onBack} className="page-editor-button">Atrás</button>
@@ -373,19 +472,21 @@ const [pageCache, setPageCache] = useState({}); // Nuevo estado para almacenar e
             </div>
             <ReactQuill
                 ref={quillRef}
-                className={"react-quill"}
+                className={'react-quill'}
                 value={currentPageContent}
+                readOnly={!isOwner}
+                theme={!isOwner ? 'bubble' : 'snow'}
                 onChange={handleContentChange}
-                modules={modules}
-                formats={formats}
+                modules={isOwner ? modules : {toolbar: false}}
             />
-
+            {isOwner &&
             <div className="page-editor-buttons">
                 <button onClick={handlePageUpdate} className="page-editor-button">Guardar Cambios</button>
                 <button onClick={handlePageDelete} className="page-editor-button">Eliminar Página</button>
             </div>
+            }
             <BookNavigation
-                bookId={book._id}
+                bookId={bookId}
                 onPageChange={handlePageChange}
                 onCreatePage={createNewPage}
                 totalPages={totalPages}

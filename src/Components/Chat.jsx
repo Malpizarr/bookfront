@@ -1,16 +1,45 @@
-import React, {useState, useEffect, useRef, useCallback} from 'react';
-import './Chat.css';
+import React, {useState, useEffect, useRef, useCallback, useLayoutEffect} from 'react';
+import '../Style/Chat.css';
 import {handleWebSocketMessage} from "./handleWebSocketMessage";
+import {faArrowDown, faCircle} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {Link} from "react-router-dom";
 
-function Chat({ webSocket, friendId, handleWebSocketMessage }) {
+function Chat({webSocket, friendId, friendUsername, onClose, friendPhotoUrl, friendStatus}) {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
+    const [isAtBottom, setIsAtBottom] = useState(true);
     const messagesEndRef = useRef(null);
+    const messagesContainerRef = useRef(null);
     const [page, setPage] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
     const [hasNewMessages, setHasNewMessages] = useState(false);
 
 
+    useEffect(() => {
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView();
+        }
+    }, [messages]);
+
+    const handleScroll = () => {
+        if (messagesContainerRef.current) {
+            const {scrollTop, scrollHeight, clientHeight} = messagesContainerRef.current;
+            const margin = 300;
+            const atBottom = Math.ceil(scrollTop + clientHeight + margin) >= clientHeight;
+            setTimeout(() => setIsAtBottom(atBottom), 100);
+        }
+    };
+
+    useEffect(() => {
+        console.log('Is at bottom:', isAtBottom);
+    }, [isAtBottom]);
+
+    useEffect(() => {
+        if (messages.length > 0) {
+            scrollToBottom();
+        }
+    }, [messages]);
 
     useEffect(() => {
         const handleMessage = (event) => {
@@ -22,16 +51,15 @@ function Chat({ webSocket, friendId, handleWebSocketMessage }) {
             if (data.type === 'chatMessages') {
                 const groupedMessages = groupMessagesByDate(data.messages);
                 setMessages(prevMessages => {
-                    // Combina los mensajes antiguos con los nuevos
                     return {...prevMessages, ...groupedMessages};
                 });
-                // ...
                 setIsLoading(false);
             } else if (data.type === 'message' && data.senderId === friendId) {
                 const newMsg = {
                     ...data,
                     timestamp: formatedrealtime(new Date(data.timestamp))
                 };
+
                 setMessages(prevMessages => {
                     const newGroupedMessages = {...prevMessages};
 
@@ -45,12 +73,12 @@ function Chat({ webSocket, friendId, handleWebSocketMessage }) {
             }
         };
 
-            setMessages([]);
+        setMessages([]);
 
 
         if (webSocket) {
             if (webSocket.readyState === WebSocket.OPEN) {
-            webSocket.addEventListener('message', handleMessage);
+                webSocket.addEventListener('message', handleMessage);
             } else {
                 webSocket.close();
             }
@@ -61,7 +89,7 @@ function Chat({ webSocket, friendId, handleWebSocketMessage }) {
 
             return () => {
                 if (webSocket) {
-                webSocket.removeEventListener('message', handleMessage);
+                    webSocket.removeEventListener('message', handleMessage);
                 }
             };
         }
@@ -81,21 +109,26 @@ function Chat({ webSocket, friendId, handleWebSocketMessage }) {
         return groupedMessages;
     }
 
-    const handleScroll = () => {
-        // verificar si el usuario se ha desplazado hasta abajo
-        // y resetear el indicador de nuevos mensajes
-        setHasNewMessages(false);
+
+    const scrollToBottom = () => {
+        if (messagesContainerRef.current) {
+            const {scrollHeight, clientHeight} = messagesContainerRef.current;
+            messagesContainerRef.current.scrollTop = scrollHeight - clientHeight;
+
+            setTimeout(() => setIsAtBottom(true), 150);
+        }
     };
-
-
     const formatedrealtime = (timestamp) => {
-        // Asumiendo que 'timestamp' es un objeto Date
-        const hours24 = timestamp.getHours();
-        const hours = ((hours24 + 11) % 12 + 1);
-        const amPm = hours24 >= 12 ? 'PM' : 'AM';
-        const minutes = ('0' + timestamp.getMinutes()).slice(-2);
+        if (!(timestamp instanceof Date) || isNaN(timestamp.getTime())) {
+            console.error('Timestamp inválido:', timestamp);
+            return 'Hora inválida';
+        }
 
-        return hours + ':' + minutes + ' ' + amPm.toLowerCase(); // 'pm' en minúsculas
+        const hours24 = timestamp.getHours();
+        const hours = hours24 % 12 || 12; // Convierte "0" horas a "12"
+        const amPm = hours24 >= 12 ? 'PM' : 'AM';
+        const minutes = timestamp.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes} ${amPm}`;
     }
 
     const sendMessage = () => {
@@ -130,21 +163,24 @@ function Chat({ webSocket, friendId, handleWebSocketMessage }) {
         });
         setNewMessage("");
     };
-
-
-
-
-
-// En tu manejador de mensajes WebSocket
-
-
-
     return (
-        <div className="chat-container">
+        <>
             <div className="chat-header">
-                Chat with {friendId}
+                <Link to={`/profiles/${friendId}`}>
+                    <img src={friendPhotoUrl} className="friend-user-photo-chat" alt={friendUsername}/>
+                </Link>
+                <span className="friend-username">{friendUsername}</span>
+                <div className="friend-status">
+                    {friendStatus === 'En línea' && (
+                        <FontAwesomeIcon icon={faCircle} className="status-icon online"/>
+                    )}
+                    {friendStatus === 'Fuera de línea' && (
+                        <FontAwesomeIcon icon={faCircle} className="status-icon offline"/>
+                    )}
+                </div>
+                <button onClick={onClose} className="close-chat">X</button>
             </div>
-            <div className="chat-messages" onScroll={handleScroll}>
+            <div className="chat-messages" ref={messagesContainerRef} onScroll={handleScroll}>
                 {Object.keys(messages).sort((a, b) => new Date(b) - new Date(a)).map((date, index, arr) => (
                     <div key={date}>
                         <div>{date}</div>
@@ -153,19 +189,25 @@ function Chat({ webSocket, friendId, handleWebSocketMessage }) {
                                 key={index}
                                 className={`message-container ${msg.senderId === friendId ? 'message-received' : 'message-sent'}`}
                             >
-                <span className="message">
-                    {msg.content}
-                </span>
+                                <span className="message">
+                                    {msg.content}
+                                </span>
                                 <span className="timestamp">
-                    {msg.timestamphour || msg.timestamp}
-                </span>
+                                    {msg.timestamphour || msg.timestamp}
+                                </span>
                             </div>
                         ))}
                     </div>
                 ))}
-                <div ref={messagesEndRef} />
             </div>
-            {hasNewMessages && <div className="new-messages-indicator">New</div>}
+            <div ref={messagesEndRef}/>
+
+            {!isAtBottom && (
+                <button className="scroll-to-bottom" onClick={scrollToBottom}>
+                    <FontAwesomeIcon icon={faArrowDown}/>
+                </button>
+            )}
+
             <div className="chat-input">
                 <input
                     type="text"
@@ -174,7 +216,8 @@ function Chat({ webSocket, friendId, handleWebSocketMessage }) {
                 />
                 <button onClick={sendMessage}>Send</button>
             </div>
-        </div>
+
+        </>
     );
 }
 

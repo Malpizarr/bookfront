@@ -1,5 +1,5 @@
 .book-list {
-    margin-top: 70px;
+    margin-top: 80px;
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
@@ -102,3 +102,84 @@
     cursor: pointer;
     margin-top: 10px;
 }
+
+.loading-container-books {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.spinner-books {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border-left-color: #09f;
+    animation: spin 1s infinite linear;
+}
+
+.loading-message-books {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #666;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.friend-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Divide el espacio en dos columnas iguales */
+    gap: 0; /* Espacio entre las columnas */
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 621px; /* Ajusta el ancho total del contenedor para incluir ambas columnas */
+    height: 602px;
+    transform-origin: bottom right;
+    transition: transform 0.3s ease;
+}
+
+
+.friend-list-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 8px; /* Reducido para un botón más pequeño */
+    background-color: #007bff; /* Azul */
+    color: white;
+    border: none;
+    border-radius: 50%; /* Círculo perfecto */
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    font-size: 12px; /* Tamaño de texto más pequeño */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra ligera para profundidad */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px; /* Ancho fijo para el círculo */
+    height: 40px; /* Alto fijo para el círculo */
+}
+
+.friend-list-button:hover {
+    background-color: #0056b3; /* Un azul un poco más oscuro para el hover */
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3); /* Sombra más pronunciada para el efecto hover */
+    transform: translateY(-2px); /* Eleva el botón ligeramente al hacer hover */
+}
+
+.friend-list-button:active {
+    background-color: #004085; /* Azul aún más oscuro para el efecto de clic */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra regresa a su estado normal */
+    transform: translateY(0); /* El botón regresa a su posición original */
+}
+
+
+

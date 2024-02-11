@@ -1,0 +1,89 @@
+.body {
+    display: flex;
+    flex-direction: row;
+    z-index: 1000;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    border: 1px solid #282c34;
+}
+
+.friend-list-cont {
+    border: 1px solid #282c34; /* Aplica el borde */
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 300px;
+    height: 600px;
+    background-color: white;
+    flex-direction: column;
+    transform-origin: bottom right;
+    transition: transform 0.3s ease;
+}
+
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.friend-item-photo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.friend-item-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ff6347;
+    text-decoration: none;
+}
+
+.friend-user-photo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.friend-item-unread {
+    font-size: 0.8em;
+    color: red;
+    margin-left: auto;
+}
+
+.view-selector {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px; /* Ajusta el margen según sea necesario */
+}
+
+.view-selector button {
+    background-color: #007bff; /* Color de fondo azul */
+    color: white; /* Texto en color blanco */
+    border: none;
+    border-radius: 5px; /* Bordes redondeados */
+    padding: 10px 20px; /* Espaciado interno */
+    margin: 0 10px; /* Separación entre botones */
+    cursor: pointer; /* Cursor en forma de mano al pasar por encima */
+    transition: background-color 0.3s ease; /* Transición suave al cambiar el color de fondo */
+}
+
+.view-selector button:hover {
+    background-color: #0056b3; /* Color de fondo más oscuro al pasar el mouse */
+}
+
+.view-selector button:focus {
+    outline: none; /* Elimina el contorno al hacer clic */
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5); /* Sombra para indicar foco */
+}
+
+.friend-item {
+    margin-left: 10px;
+    margin-top: 10px;
+}

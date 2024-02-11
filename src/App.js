@@ -10,18 +10,18 @@ import {jwtDecode} from 'jwt-decode';
 import LandingPage from "./Components/landingpage";
 import BookFriends from "./Components/BookFriends";
 import { useWebSocket } from './Components/WebSocketContext';
+import Profile from "./Components/Profile";
 
 
 
 function App() {
-  const [selectedBook, setSelectedBook] = useState(null);
   const [currentPage, setCurrentPage] = useState(null);
   const [showRegisterForm, setShowRegisterForm] = useState(false); // Nuevo estado
   const { webSocket, setWebSocket } = useWebSocket();
   const { user, setUser } = useUser();
 
   const goBackToBookList = () => {
-    setSelectedBook(null);
+      navigate('/books');
     localStorage.removeItem('totalPages');
   };
 
@@ -46,7 +46,8 @@ function App() {
           photoUrl: userinfo.photoUrl
         });
 
-        console.log('User:', user.id, user.username, user.email, user.token, user.photoUrl);
+          console.log('Usuario verificado:', user);
+
         if (!webSocket) {
           const ws = new WebSocket('ws://localhost:8083', data.token);
           ws.onopen = () => {
@@ -56,11 +57,10 @@ function App() {
         } else if (!user) {
           webSocket.close();
         }
-        
-        // Configura cualquier otro estado o contexto basado en la respuesta
+
       } catch (error) {
         console.error('Error al refrescar el token:', error);
-        // Manejar el caso en que el usuario no está autenticado o el token no se pudo refrescar
+          setUser(null);
       }
     };
 
@@ -69,7 +69,6 @@ function App() {
 
   useEffect(() => {
     if (user) {
-      console.log('User:', user.id, user.username, user.email, user.token, user.PhotoUrl);
       const ws = new WebSocket('ws://localhost:8083', user.token);
 
 
@@ -106,7 +105,8 @@ function App() {
             username: decoded.username,
             email: decoded.email,
             token: jwt,
-            photoUrl: decoded.photoUrl
+              photoUrl: decoded.photoUrl,
+              isAuthenticated: true
           };
 
           setUser(userData);
@@ -144,16 +144,6 @@ function App() {
     }
   }, []);
 
-
-
-
-  useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt || isTokenExpired(jwt)) {
-      handleLogout();
-      navigate('/');
-    }
-  }, []);
 
   function isTokenExpired(token) {
     try {
@@ -198,10 +188,7 @@ function App() {
       }
 
       const loginData = await loginResponse.json();
-      console.log('Login exitoso:', loginData);
       const decoded = jwtDecode(loginData.token);
-
-      console.log('Decoded:', decoded);
 
 
       const userData = {
@@ -209,11 +196,12 @@ function App() {
         username: decoded.username,
         email: decoded.email,
         token: loginData.token,
-        PhotoUrl: decoded.photoUrl
+          photoUrl: decoded.photoUrl,
+          isAuthenticated: true
       };
 
 
-      setUser(userData);
+        setUser(userData);
 
     } catch (error) {
       console.error('Error de login:', error);
@@ -221,19 +209,13 @@ function App() {
     }
   };
 
-
-
-  // En App.js`
-
   const handleLogout = async () => {
     try {
       // Llamada al endpoint de logout
       await fetch('http://localhost:8081/auth/logout', {
         method: 'POST',
-        credentials: 'include' // Importante para incluir cookies
+          credentials: 'include'
       });
-
-      // Manejar la lógica de logout en el cliente
       if (webSocket) {
         webSocket.close();
         setWebSocket(null);
@@ -252,13 +234,13 @@ function App() {
 
   const selectBook = (book) => {
     if (book && typeof book._id !== 'undefined') {
-      setSelectedBook(book);
       setCurrentPage(null);
-      navigate("/editor"); // Navega a la página del editor
+        navigate(`/editor/${book._id}`); // Navega a la página del editor
     } else {
       console.error('Libro seleccionado no válido:', book);
     }
   };
+
 
 
   const handleRegister = async (mail, username, password, setErrorMessage, setLoginError) => {
@@ -293,20 +275,56 @@ function App() {
     }
   };
 
+    const handleUpdateUser = async (updatedUserInfo) => {
+        try {
+            const userId = user.id; // Asume que tienes el ID del usuario en el estado 'user'
+            const response = await fetch(`http://localhost:8081/users/update/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`, // Asume que tienes un token de autenticación
+                },
+                body: JSON.stringify(updatedUserInfo),
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to update user profile: ${errorText}`);
+            }
+
+            const updatedUser = await response.json();
+            setUser(updatedUser); // Actualiza el estado global del usuario con los datos actualizados
+            alert('Perfil actualizado con éxito');
+        } catch (error) {
+            console.error('Error updating user profile:', error);
+            alert('Error al actualizar el perfil: ' + error.message);
+        }
+    };
+
+
+
 
 
 
 
   return (
 
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/friends" element={user ? <BookFriends /> : <Navigate to="/" />} />
-          <Route path="/login" element={user ? <Navigate to="/" /> : <LoginForm onLogin={handleLogin} onToggleForms={toggleForms} />} />
-          <Route path="/register" element={<RegisterForm onRegister={handleRegister} onToggleForms={toggleForms} />} />
-          <Route path="/books" element={user ? <BookList onSelectBook={selectBook} onLogout={handleLogout} /> : <Navigate to="/" />} />
-          <Route path="/editor" element={user && selectedBook ? <PageEditor book={selectedBook} currentPage={currentPage} setCurrentPage={setCurrentPage} onLogout={handleLogout} onBack={goBackToBookList} /> : <Navigate to="/books" />} />
-        </Routes>
+      <Routes>
+          <Route path="/" element={<LandingPage/>}/>
+          <Route path="/friends" element={user ? <BookFriends/> : <Navigate to="/"/>}/>
+          <Route path="/login"
+                 element={user ? <Navigate to="/"/> : <LoginForm onLogin={handleLogin} onToggleForms={toggleForms}/>}/>
+          <Route path="/register" element={<RegisterForm onRegister={handleRegister} onToggleForms={toggleForms}/>}/>
+          <Route path="/books"
+                 element={user ? <BookList onSelectBook={selectBook} onLogout={handleLogout}/> : <Navigate to="/"/>}/>
+          <Route path="/editor/:bookId" element={user ?
+              <PageEditor currentPage={currentPage} setCurrentPage={setCurrentPage} onLogout={handleLogout}
+                          onBack={goBackToBookList}/> : <Navigate to="/books"/>}/>
+          <Route path="/profiles/:username"
+                 element={user ? <Profile onUpdateUser={handleUpdateUser} onBack={goBackToBookList}/> :
+                     <Navigate to="/login"/>}/>
+
+      </Routes>
   );
 }
 
