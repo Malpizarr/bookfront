@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {useUser} from './UserContext';
 
-// Asegúrate de que la función onSelectBook se recibe correctamente mediante props
+
 function BookFriends({onSelectBook}) {
     const [friendBooks, setFriendBooks] = useState([]);
     const {user} = useUser();
