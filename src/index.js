@@ -1,18 +1,23 @@
-// index.js
 import React from 'react';
-import ReactDOM from 'react-dom';
+import {createRoot} from 'react-dom/client'; // Importa createRoot
 import App from './App';
 import { UserProvider } from './Components/UserContext';
-import { WebSocketProvider } from './Components/WebSocketContext'; // Importa el proveedor de WebSocket
+import {WebSocketProvider} from './Components/WebSocketContext';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-ReactDOM.render(
+// Accede a la raíz del DOM donde tu aplicación será montada
+const container = document.getElementById('root');
+
+// Crea una raíz con createRoot
+const root = createRoot(container);
+
+// Usa la raíz para renderizar tus componentes
+root.render(
     <UserProvider>
         <WebSocketProvider> {/* Envuelve tu App con WebSocketProvider */}
             <Router>
                 <App />
             </Router>
         </WebSocketProvider>
-    </UserProvider>,
-    document.getElementById('root')
+    </UserProvider>
 );

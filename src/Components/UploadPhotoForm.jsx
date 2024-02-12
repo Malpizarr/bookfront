@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import {jwtDecode} from "jwt-decode";
 import {useUser} from "./UserContext";
 import "../Style/UploadPhotoForm.css";
 

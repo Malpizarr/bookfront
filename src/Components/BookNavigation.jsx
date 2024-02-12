@@ -32,7 +32,7 @@ function BookNavigation({ bookId, onPageChange, onCreatePage, totalPages }) {
     const changePage = (offset) => {
         setCurrentPageNumber(prev => {
             const newPageNumber = Math.max(1, Math.min(prev + offset, totalPages));
-            fetchPage(newPageNumber).then(r => console.log(r));
+            fetchPage(newPageNumber);
             return newPageNumber;
         });
     };

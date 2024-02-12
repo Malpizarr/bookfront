@@ -1,11 +1,11 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect} from 'react';
 import LoginForm from './Components/LoginForm';
 import BookList from './Components/BookList';
 import PageEditor from './Components/PageEditor';
 import { useUser } from './Components/UserContext';
 import './App.css';
 import RegisterForm from "./Components/RegisterForm";
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import {Routes, Route, Navigate, useNavigate} from 'react-router-dom';
 import {jwtDecode} from 'jwt-decode';
 import LandingPage from "./Components/landingpage";
 import BookFriends from "./Components/BookFriends";
@@ -46,12 +46,10 @@ function App() {
           photoUrl: userinfo.photoUrl
         });
 
-          console.log('Usuario verificado:', user);
 
         if (!webSocket) {
           const ws = new WebSocket('ws://localhost:8083', data.token);
           ws.onopen = () => {
-            console.log('Conexión WebSocket establecida');
             setWebSocket(ws); // Guarda la conexión en el contexto global
           }
         } else if (!user) {
@@ -59,7 +57,6 @@ function App() {
         }
 
       } catch (error) {
-        console.error('Error al refrescar el token:', error);
           setUser(null);
       }
     };
@@ -73,8 +70,7 @@ function App() {
 
 
       ws.onopen = () => {
-        console.log('Conexión WebSocket establecida');
-        setWebSocket(ws); // Guarda la conexión en el contexto global
+        setWebSocket(ws);
       };
 
       ws.onerror = (error) => {
@@ -293,8 +289,13 @@ function App() {
             }
 
             const updatedUser = await response.json();
-            setUser(updatedUser); // Actualiza el estado global del usuario con los datos actualizados
-            alert('Perfil actualizado con éxito');
+          setUser(prevUser => ({
+            ...prevUser,
+            username: updatedUser.username,
+            email: updatedUser.email,
+            photoUrl: updatedUser.photoUrl
+          }));
+          alert('Perfil actualizado con éxito');
         } catch (error) {
             console.error('Error updating user profile:', error);
             alert('Error al actualizar el perfil: ' + error.message);

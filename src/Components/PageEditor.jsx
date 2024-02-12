@@ -7,8 +7,7 @@ import 'react-quill/dist/quill.snow.css';
 import '../Style/PageEditor.css';
 import Navbar from "./NavBar";
 import {useParams} from "react-router-dom";
-import DOMPurify from 'dompurify';
-import {filterXSS} from 'xss';
+
 
 
 
@@ -40,6 +39,19 @@ function PageEditor({onLogout, onBack}) {
             setCurrentPageNumber(Math.max(totalPages, 1));
         }
     }, [totalPages, currentPageNumber]);
+
+    useEffect(() => {
+        let timer;
+        if (saveStatus === 'noGuardado') {
+            timer = setTimeout(() => {
+                if (saveStatus === 'noGuardado') {
+                    handlePageUpdate(currentPageContent, currentPageNumber);
+                }
+            }, 1000);
+        }
+
+        return () => clearTimeout(timer);
+    }, [saveStatus]);
 
 
     const fetchBook = async () => {
@@ -143,7 +155,7 @@ function PageEditor({onLogout, onBack}) {
             [{'color': []}, {'background': []}],          // dropdown with defaults from theme
             [{'font': []}],
             [{'align': []}],
-            ['link', 'image', 'video'], // Enlace e imagen y video
+            ['link', 'image'], // Enlace e imagen y video
             ['clean']                                         // remove formatting button
 
         ],
@@ -224,10 +236,10 @@ function PageEditor({onLogout, onBack}) {
 
     const handleContentChange = (content, delta, source, editor) => {
         if (isOwner) {
-        const formattedContent = editor.getHTML();
-        setCurrentPageContent(formattedContent);
-        setIsContentChanged(true);
-        setSaveStatus('noGuardado');
+            const formattedContent = editor.getHTML();
+            setCurrentPageContent(formattedContent);
+            setIsContentChanged(true);
+            setSaveStatus('noGuardado');
         }
     };
 
@@ -434,64 +446,64 @@ function PageEditor({onLogout, onBack}) {
     return (
         <>
             <Navbar />
-        <div className="page-editor-container">
+            <div className="page-editor-container">
 
-            <div className="page-editor-header">
-                {isOwner && !isLoading &&
-                <h2>Editando libro: {book.title}</h2>
-                }
-                {!isOwner &&
-                    <h2>Viendo libro: {book.title}</h2>
-                }
-                {isOwner &&
-                <div className="save-status">
-                    {saveStatus === 'noGuardadoEdit' &&
-                        <span className="save-status-text">No guardado</span>
+                <div className="page-editor-header">
+                    {isOwner && !isLoading &&
+                        <h2>Editando libro: {book.title}</h2>
                     }
-                    {saveStatus === 'guardado' &&
-                        <span className="save-status-text">Saved</span>
+                    {!isOwner &&
+                        <h2>Viendo libro: {book.title}</h2>
                     }
-                    {saveStatus === 'noGuardado' &&
-                        <span className="save-status-text" >
+                    {isOwner &&
+                        <div className="save-status">
+                            {saveStatus === 'noGuardadoEdit' &&
+                                <span className="save-status-text">No guardado</span>
+                            }
+                            {saveStatus === 'guardado' &&
+                                <span className="save-status-text">Saved</span>
+                            }
+                            {saveStatus === 'noGuardado' &&
+                                <span className="save-status-text">
                         <img
                             src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif"
                             alt="Guardando..."
                             className="save-status-icon"
                         />
                         Saving...</span>
+                            }
+                            {saveStatus === 'guardadoerror' &&
+                                <span className="save-status-text">Error al guardar</span>
+                            }
+                        </div>
                     }
-                    {saveStatus === 'guardadoerror' &&
-                        <span className="save-status-text">Error al guardar</span>
-                    }
+                    <div className="page-editor-buttons">
+                        <button onClick={onLogout} className="page-editor-button">Logout</button>
+                        <button onClick={onBack} className="page-editor-button">Atrás</button>
+                    </div>
                 </div>
+                <ReactQuill
+                    ref={quillRef}
+                    className={'react-quill'}
+                    value={currentPageContent}
+                    readOnly={!isOwner}
+                    theme={!isOwner ? 'bubble' : 'snow'}
+                    onChange={handleContentChange}
+                    modules={isOwner ? modules : {toolbar: false}}
+                />
+                {isOwner &&
+                    <div className="page-editor-buttons">
+                        <button onClick={handlePageUpdate} className="page-editor-button">Guardar Cambios</button>
+                        <button onClick={handlePageDelete} className="page-editor-button">Eliminar Página</button>
+                    </div>
                 }
-                <div className="page-editor-buttons">
-                    <button onClick={onLogout} className="page-editor-button">Logout</button>
-                    <button onClick={onBack} className="page-editor-button">Atrás</button>
-                </div>
+                <BookNavigation
+                    bookId={bookId}
+                    onPageChange={handlePageChange}
+                    onCreatePage={createNewPage}
+                    totalPages={totalPages}
+                />
             </div>
-            <ReactQuill
-                ref={quillRef}
-                className={'react-quill'}
-                value={currentPageContent}
-                readOnly={!isOwner}
-                theme={!isOwner ? 'bubble' : 'snow'}
-                onChange={handleContentChange}
-                modules={isOwner ? modules : {toolbar: false}}
-            />
-            {isOwner &&
-            <div className="page-editor-buttons">
-                <button onClick={handlePageUpdate} className="page-editor-button">Guardar Cambios</button>
-                <button onClick={handlePageDelete} className="page-editor-button">Eliminar Página</button>
-            </div>
-            }
-            <BookNavigation
-                bookId={bookId}
-                onPageChange={handlePageChange}
-                onCreatePage={createNewPage}
-                totalPages={totalPages}
-            />
-        </div>
         </>
     );
 }

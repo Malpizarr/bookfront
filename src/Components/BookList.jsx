@@ -4,7 +4,6 @@ import '../Style/BookList.css';
 import Navbar from "./NavBar";
 import FriendList from "./FriendsList";
 import BookFriends from "./BookFriends";
-import UploadPhotoForm from "./UploadPhotoForm";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faEnvelope} from '@fortawesome/free-solid-svg-icons';
 
@@ -66,7 +65,6 @@ function BookList({ onSelectBook, onLogout }) {
         if (!user) return;
         const jwt = user.token;
         if (!jwt) {
-            console.error('No se encontró el token JWT');
             return;
         }
 
@@ -90,28 +88,6 @@ function BookList({ onSelectBook, onLogout }) {
         }
     };
 
-
-
-    let clickCount = 0; // Contador de clics
-    let clickTimer = null; // Temporizador para identificar doble clic
-
-    const handleBookSelect = (event, book) => {
-        event.stopPropagation();
-        clickCount++;
-        if (clickCount === 1) {
-            clickTimer = setTimeout(() => {
-                if (clickCount === 1 && editingBookId === null) {
-                    onSelectBook(book); // Clic simple
-                }
-                clickCount = 0;
-            }, 400); // Intervalo de tiempo para esperar un segundo clic
-        } else if (clickCount === 2) {
-            clearTimeout(clickTimer); // Limpia el temporizador y maneja el doble clic
-            setEditingBookId(book._id);
-            setNewBookTitle(book.title);
-            clickCount = 0;
-        }
-    };
 
 
 
@@ -233,7 +209,8 @@ function BookList({ onSelectBook, onLogout }) {
                  style={{transform: isFriendListVisible ? 'scale(1)' : 'scale(0)'}}>
                 <FriendList onLogout={onLogout}/>
             </div>
-            <button onClick={() => setIsFriendListVisible(!isFriendListVisible)} className="friend-list-button">
+            <button onClick={() => setIsFriendListVisible(!isFriendListVisible)} className="friend-list-button"
+                    aria-label="Open FriendList">
                 <FontAwesomeIcon icon={faEnvelope}/>
             </button>
         </>

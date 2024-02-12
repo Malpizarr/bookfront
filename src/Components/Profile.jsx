@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {useParams} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import {useUser} from "./UserContext";
 import "../Style/Profile.css";
 import UploadPhotoForm from "./UploadPhotoForm";
@@ -13,6 +13,7 @@ function Profile({onUpdateUser, onBack}) {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showChangePasswordPopup, setShowChangePasswordPopup] = useState(false);
     const [oldPassword, setOldPassword] = useState('');
+    const navigate = useNavigate();
 
     const isCurrentUser = user.username === username; // Verifica si el perfil es del usuario actual
     const [profile, setProfile] = useState({
@@ -23,39 +24,74 @@ function Profile({onUpdateUser, onBack}) {
 
 
     useEffect(() => {
-
-        const fetchUserProfile = async () => {
-            try {
-                const endpoint = `http://localhost:8081/users/${username}`;
-                try {
-                    const response = await fetch(endpoint, {
-                        headers: {
-                            // Incluye el token de autorización en los headers si es el perfil del usuario actual
-                            'Authorization': `Bearer ${user.token}`,
-                        },
-                    });
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch user profile');
-                    }
-                    const data = await response.json();
-                    setProfile({
-                        username: data.username,
-                        email: data.Email, // Asegúrate de que el backend envía el email con la clave 'Email'
-                        photoUrl: data.PhotoUrl, // Y la URL de la foto con 'PhotoUrl'
-                    });
-                } catch (error) {
-                    console.error('Error fetching user profile:', error);
-                }
-            } catch (error) {
-                console.error('Error fetching user profile:', error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchUserProfile();
+        if (!user.id || !user.email || !isCurrentUser) {
+            fetchUserProfile();
+        } else {
+            setProfile({
+                username: user.username,
+                email: user.email,
+                photoUrl: user.photoUrl,
+            });
+            setIsLoading(false);
+        }
     }, [username, isCurrentUser, user.id, user.token, user.photoUrl]);
 
+    const fetchUserProfile = async () => {
+        try {
+            const endpoint = `http://localhost:8081/users/${username}`;
+            try {
+                const response = await fetch(endpoint, {
+                    headers: {
+                        'Authorization': `Bearer ${user.token}`,
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user profile');
+                }
+                const data = await response.json();
+                setProfile({
+                    username: data.username,
+                    email: data.Email, // Asegúrate de que el backend envía el email con la clave 'Email'
+                    photoUrl: data.PhotoUrl, // Y la URL de la foto con 'PhotoUrl'
+                });
+            } catch (error) {
+                console.error('Error fetching user profile:', error);
+            }
+        } catch (error) {
+            console.error('Error fetching user profile:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const fetchUserProfileUpdate = async (username) => {
+        try {
+            const endpoint = `http://localhost:8081/users/${username}`;
+            try {
+                const response = await fetch(endpoint, {
+                    headers: {
+                        // Incluye el token de autorización en los headers si es el perfil del usuario actual
+                        'Authorization': `Bearer ${user.token}`,
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user profile');
+                }
+                const data = await response.json();
+                setProfile({
+                    username: data.username,
+                    email: data.Email, // Asegúrate de que el backend envía el email con la clave 'Email'
+                    photoUrl: data.PhotoUrl, // Y la URL de la foto con 'PhotoUrl'
+                });
+            } catch (error) {
+                console.error('Error fetching user profile:', error);
+            }
+        } catch (error) {
+            console.error('Error fetching user profile:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const handleChangePassword = async (e) => {
         e.preventDefault();
@@ -109,6 +145,8 @@ function Profile({onUpdateUser, onBack}) {
         };
 
         onUpdateUser(updatedUser);
+        fetchUserProfileUpdate(updatedUser.username);
+        navigate(`/profiles/${profile.username}`);
     };
 
 

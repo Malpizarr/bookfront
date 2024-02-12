@@ -23,15 +23,15 @@ function Navbar() {
                 </div>
             </div>
             <div className="navbar-links">
-                <div className={`${isMenuOpen ? 'active' : ''}`}>
+                <div className={isMenuOpen ? 'active' : ''}>
                     {user && (
                         <>
-
                             <Link to="/books" className="navbar-item">Books</Link>
-                            <Link to="/books" className="navbar-item"></Link>
                             <Link to={`/profiles/${user.username}`} className="navbar-item">
-                                {user.photoUrl && (
+                                {user.photoUrl ? (
                                     <img src={user.photoUrl} alt="User" className="navbar-user-photo"/>
+                                ) : (
+                                    <span>{user.username}</span>
                                 )}
                             </Link>
                         </>

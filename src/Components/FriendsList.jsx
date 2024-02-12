@@ -1,7 +1,6 @@
-import React, {useEffect, useReducer, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { useUser } from './UserContext';
 import '../Style/FriendsList.css';
-import Navbar from "./NavBar";
 import { useWebSocket } from "./WebSocketContext";
 import Chat from "./Chat";
 import SearchUsers from "./SearchUsers";
@@ -13,7 +12,7 @@ function FriendList({ onLogout }) {
     const [pendingFriends, setPendingFriends] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const { user } = useUser();
-    const { webSocket, setWebSocket } = useWebSocket();
+    const {webSocket} = useWebSocket();
     const [unreadCount, setUnreadCount] = useState({});
     const [friendsCache, setFriendsCache] = useState(null); // Estado para almacenar el caché de amigos
     const [pendingFriendsCache, setPendingFriendsCache] = useState(null);
@@ -84,7 +83,6 @@ function FriendList({ onLogout }) {
         setSelectedFriendId(friendId);
         resetUnreadCount(friendId); // Restablecer en el estado local
         setIsChatVisible(true); // Mostrar el chat
-        console.log(isChatVisible);
         // Enviar solicitud al servidor para restablecer el contador
         const jwt = user.token;
         await fetch('http://localhost:8081/chat/reset-unread-messages', {
@@ -105,6 +103,7 @@ function FriendList({ onLogout }) {
 
 
     useEffect(() => {
+        if (!user || !user.token) return;
         const fetchUnreadMessages = async () => {
             // Asume que tienes una función para obtener el token JWT
             const jwt = user.token;
@@ -115,7 +114,7 @@ function FriendList({ onLogout }) {
             });
 
             if (!response.ok) {
-                throw new Error('Error al obtener mensajes no leídos');
+                return;
             }
 
             const data = await response.json();
@@ -126,16 +125,14 @@ function FriendList({ onLogout }) {
             }, {}));
         };
 
-        fetchUnreadMessages().catch(console.error);
+        fetchUnreadMessages().catch(error => {
+            return;
+        });
     }, []);
 
 
     const handleWebSocketMessage = (event) => {
         const message = JSON.parse(event.data);
-
-        if (message.type !== 'friendsList') {
-            console.log('Mensaje:', message.type);
-        }
 
 
         switch (message.type) {
@@ -153,14 +150,14 @@ function FriendList({ onLogout }) {
                 webSocket.send(JSON.stringify({type: 'forcedUpdatelist', friendId: user.id}));
                 break;
             case 'friendshipRequested':
-                fetchPendingFriends(); // Opcional: actualiza las solicitudes pendientes si es necesario
+                fetchPendingFriends();
                 break;
             case 'friendshipDeleted':
-                fetchFriends(); // Vuelve a buscar la lista de amigos para incluir el nuevo amigo
-                fetchPendingFriends(); // Opcional: actualiza las solicitudes pendientes si es necesario
-            // eslint-disable-next-line no-fallthrough
+                fetchFriends();
+                fetchPendingFriends();
+                break;
             default:
-                console.log('Mensaje no reconocido:', message);
+                break;
         }
     };
 
@@ -175,7 +172,6 @@ function FriendList({ onLogout }) {
             handleWebSocketMessage(event);
         };
 
-        // Manejador para la reconexión
         const handleOpen = () => {
             requestFriendsList();
         };
@@ -198,7 +194,6 @@ function FriendList({ onLogout }) {
 
 
     const updateFriendsOnlineStatus = (onlineFriendsIds) => {
-        // Actualiza el estado de manera inmutable
         setFriends(prevFriends => prevFriends.map(friend => ({
             ...friend,
             status: onlineFriendsIds.includes(friend.friendId) ? 'En línea' : 'Fuera de línea'
@@ -207,7 +202,7 @@ function FriendList({ onLogout }) {
 
 
     const sendFriendRequest = async (friendId) => {
-        console.log(user.id);
+        if (!user) return;
         const jwt = user.token;
         await fetch('http://localhost:8081/api/friendships/createfriendship', {
             method: 'POST',
@@ -222,6 +217,7 @@ function FriendList({ onLogout }) {
     };
 
     const acceptFriendRequest = async (friendshipId, friendId) => {
+        if (!user) return;
         const jwt = user.token;
         const url = new URL('http://localhost:8081/api/friendships/accept');
         url.searchParams.append('friendshipId', friendshipId); // Añade friendshipId como parámetro de consulta
@@ -246,6 +242,7 @@ function FriendList({ onLogout }) {
     const fetchFriends = async () => {
         setIsLoading(true);
 
+        if (!user || !user.token) return;
         try {
             const response = await fetch(`http://localhost:8081/api/friendships/friends`, {
                 headers: {
@@ -261,7 +258,7 @@ function FriendList({ onLogout }) {
             setFriends(data);
             setFriendsCache(data); // Actualiza el caché con los nuevos datos
         } catch (error) {
-            console.error('Error al obtener amigos:', error);
+            return;
         } finally {
             setIsLoading(false);
         }

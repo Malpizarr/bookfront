@@ -10,7 +10,6 @@ function BookFriends({onSelectBook}) {
         const fetchAllFriendBooks = async () => {
             const jwt = user?.token;
             if (!jwt) {
-                console.error('No se encontró el token JWT');
                 return;
             }
             try {
@@ -29,20 +28,18 @@ function BookFriends({onSelectBook}) {
 
     // Manejador de eventos para cuando se selecciona un libro
     const handleSelectBook = (book) => {
-        console.log('Seleccionando libro:', book);
         if (onSelectBook) {
-            console.log('Entro:', book);
             onSelectBook(book);
         }
     };
 
     return (
         <div className="friend-books">
-            <h2>Libros de amigos</h2>
+            <h3>Libros de amigos</h3>
             {friendBooks.length > 0 ? (
                 friendBooks.map(book => (
-                    <div onClick={() => handleSelectBook(book)} className="book-item">
-                        <div key={book._id} className="book-item-cover">
+                    <div key={book._id} onClick={() => handleSelectBook(book)} className="book-item">
+                        <div className="book-item-cover">
                             <div className="book-item-title">{book.title}</div>
                             <div className="book-item-status">{book.status}</div>
                             <div className="book-item-owner">{book.username}</div>
@@ -54,6 +51,7 @@ function BookFriends({onSelectBook}) {
             )}
         </div>
     );
+
 }
 
 export default BookFriends;
