@@ -44,7 +44,7 @@ function RegisterForm({ onRegister, onToggleForms }) {
     };
 
     const handleOAuthRegister = () => {
-        window.location.href = 'http://localhost:8081/oauth2/authorization/google';
+        window.location.href = `${process.env.REACT_APP_PROD_API_URL}/oauth2/authorization/google`;
     };
 
 

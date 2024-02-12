@@ -10,7 +10,7 @@ function SearchUsers({onSendFriendRequest}) {
 
     // Función para realizar la búsqueda
     const fetchSearchResults = async (token, searchTerm) => {
-        const response = await fetch(`http://localhost:8081/users/search?username=${searchTerm}`, {
+        const response = await fetch(`${process.env.REACT_APP_PROD_API_URL}/users/search?username=${searchTerm}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

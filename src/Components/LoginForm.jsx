@@ -32,12 +32,12 @@ function LoginForm({ onLogin }) {
 
     const handleOAuthLogin = () => {
         // Redirecciona para la autenticación con Google
-        window.location.href = 'http://localhost:8081/oauth2/authorization/google';
+        window.location.href = `${process.env.REACT_APP_PROD_API_URL}/oauth2/authorization/google`;
 
     };
 
     const handleFacebookLogin = () => {
-        window.location.href = 'http://localhost:8081/oauth2/authorization/facebook';
+        window.location.href = `${process.env.REACT_APP_PROD_API_URL}/oauth2/authorization/facebook`;
     };
 
 

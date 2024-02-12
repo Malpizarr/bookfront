@@ -39,7 +39,7 @@ function BookList({ onSelectBook, onLogout }) {
                 status: newBookStatus
             };
 
-            const response = await fetch(`http://localhost:8081/books/update/${editingBookId}`, {
+            const response = await fetch(`${process.env.REACT_APP_PROD_API_URL}/books/update/${editingBookId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -52,7 +52,7 @@ function BookList({ onSelectBook, onLogout }) {
                 throw new Error('Error al actualizar el libro');
             }
 
-            // Actualiza el estado de los libros en el cliente
+
             setBooks(books.map(book => book._id === editingBookId ? updatedBook : book));
             setEditingBookId(null); // Finaliza la edición
         } catch (error) {
@@ -69,7 +69,7 @@ function BookList({ onSelectBook, onLogout }) {
         }
 
         try {
-            const response = await fetch(`http://localhost:8081/books/all`, {
+            const response = await fetch(`${process.env.REACT_APP_PROD_API_URL}/books/all`, {
                 headers: {
                     'Authorization': `Bearer ${jwt}`
                 }
@@ -106,7 +106,7 @@ function BookList({ onSelectBook, onLogout }) {
 
     const addNewBook = async () => {
         try {
-            const response = await fetch(`http://localhost:8081/books/create`, {
+            const response = await fetch(`${process.env.REACT_APP_PROD_API_URL}/books/create`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -128,7 +128,7 @@ function BookList({ onSelectBook, onLogout }) {
 
     const deleteBook = async (bookId) => {
         try {
-            const response = await fetch(`http://localhost:8081/books/delete/${bookId}`, {
+            const response = await fetch(`${process.env.REACT_APP_PROD_API_URL}/books/delete/${bookId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${user.token}`,

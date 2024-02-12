@@ -13,7 +13,7 @@ function BookFriends({onSelectBook}) {
                 return;
             }
             try {
-                const response = await fetch(`http://localhost:8081/books/all-friends-books`, {
+                const response = await fetch(`${process.env.REACT_APP_PROD_API_URL}/books/all-friends-books`, {
                     headers: { 'Authorization': `Bearer ${jwt}` }
                 });
                 const books = await response.json();

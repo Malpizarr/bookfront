@@ -64,7 +64,7 @@ function PageEditor({onLogout, onBack}) {
                 method: 'GET',
                 credentials: 'include'
             };
-            response = await fetch(`http://localhost:8081/books/${bookId}`, options);
+            response = await fetch(`${process.env.REACT_APP_PROD_API_URL}/books/${bookId}`, options);
 
             if (!response.ok) {
                 if (response.status === 403 || response.status === 401) {
@@ -252,7 +252,7 @@ function PageEditor({onLogout, onBack}) {
         try {
             if (!user.token) {
                 // Si no hay token, hace la petición con las cookies incluidas
-                response = await fetch(`http://localhost:8081/books/${bookId}/pages`, {
+                response = await fetch(`${process.env.REACT_APP_PROD_API_URL}/books/${bookId}/pages`, {
                     method: 'GET', // Asumiendo que es una operación de obtención
                     credentials: 'include', // Necesario para incluir cookies en la petición
                 });
@@ -292,7 +292,7 @@ function PageEditor({onLogout, onBack}) {
             setCurrentPageContent(cachedPage);
         } else {
             try {
-                const response = await fetch(`http://localhost:8081/books/${bookId}/page/${currentPageNumber}`, {
+                const response = await fetch(`${process.env.REACT_APP_PROD_API_URL}/books/${bookId}/page/${currentPageNumber}`, {
                     headers: { 'Authorization': `Bearer ${user.token}` }
                 });
                 if (!response.ok) throw new Error('Error al cargar la página');
@@ -319,7 +319,7 @@ function PageEditor({onLogout, onBack}) {
             const newPageNumber = currentPageNumber + 1;
             const newPage = { content: '', pageNumber: newPageNumber };
 
-            const response = await fetch(`http://localhost:8081/books/${bookId}/createPage`, {
+            const response = await fetch(`${process.env.REACT_APP_PROD_API_URL}/books/${bookId}/createPage`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -344,7 +344,7 @@ function PageEditor({onLogout, onBack}) {
     const handlePageUpdate = async (content, pageNumber) => {
         if (quillRef.current && pageNumber) {
             try {
-                const response = await fetch(`http://localhost:8081/books/${book._id}/updatePage/${pageNumber}`, {
+                const response = await fetch(`${process.env.REACT_APP_PROD_API_URL}/books/${book._id}/updatePage/${pageNumber}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -388,7 +388,7 @@ function PageEditor({onLogout, onBack}) {
 
     const handlePageDelete = async () => {
         try {
-            const response = await fetch(`http://localhost:8081/books/${book._id}/deletePage/${currentPageNumber}`, {
+            const response = await fetch(`${process.env.REACT_APP_PROD_API_URL}/books/${book._id}/deletePage/${currentPageNumber}`, {
                 method: 'DELETE',
                 headers: {'Authorization': `Bearer ${user.token}`}
             });

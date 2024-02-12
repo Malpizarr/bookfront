@@ -26,7 +26,7 @@ function UploadPhotoForm({ userId }) {
         console.log('token:', user.token);
 
         try {
-            const response = await fetch(`http://localhost:8081/users/uploadPhoto/${userId}`, {
+            const response = await fetch(`${process.env.REACT_APP_PROD_API_URL}/users/uploadPhoto/${userId}`, {
                 method: 'POST',
                 body: formData,
                 headers: {

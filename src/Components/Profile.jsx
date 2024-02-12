@@ -102,7 +102,7 @@ function Profile({onUpdateUser, onBack}) {
         }
 
         try {
-            const response = await fetch(`http://localhost:8081/users/updatePassword/${user.id}`, {
+            const response = await fetch(`${process.env.REACT_APP_PROD_API_URL}/users/updatePassword/${user.id}`, {
                 method: 'PUT', // Cambiado a PUT
                 headers: {
                     'Content-Type': 'application/json',

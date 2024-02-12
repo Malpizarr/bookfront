@@ -61,7 +61,7 @@ function FriendList({ onLogout }) {
         setIsLoading(true);
         const jwt = user.token;
         try {
-            const response = await fetch(`http://localhost:8081/api/friendships/pending`, {
+            const response = await fetch(`${process.env.REACT_APP_PROD_API_URL}/api/friendships/pending`, {
                 headers: {
                     'Authorization': `Bearer ${jwt}`
                 }
@@ -85,7 +85,7 @@ function FriendList({ onLogout }) {
         setIsChatVisible(true); // Mostrar el chat
         // Enviar solicitud al servidor para restablecer el contador
         const jwt = user.token;
-        await fetch('http://localhost:8081/chat/reset-unread-messages', {
+        await fetch(`${process.env.REACT_APP_PROD_API_URL}/chat/reset-unread-messages`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${jwt}`,
@@ -107,7 +107,7 @@ function FriendList({ onLogout }) {
         const fetchUnreadMessages = async () => {
             // Asume que tienes una función para obtener el token JWT
             const jwt = user.token;
-            const response = await fetch('http://localhost:8081/chat/unread-messages', {
+            const response = await fetch(`${process.env.REACT_APP_PROD_API_URL}/chat/unread-messages`, {
                 headers: {
                     'Authorization': `Bearer ${jwt}`
                 }

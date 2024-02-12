@@ -74,7 +74,7 @@ function BookNavigation({ bookId, onPageChange, onCreatePage, totalPages }) {
     };
 
     const fetchPageData = async (pageNumber) => {
-        const url = `http://localhost:8081/books/${bookId}/page/${pageNumber}`;
+        const url = `${process.env.REACT_APP_PROD_API_URL}/books/${bookId}/page/${pageNumber}`;
         return fetch(url, {
             headers: { 'Authorization': `Bearer ${user.token}` }
         });

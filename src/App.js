@@ -14,6 +14,7 @@ import Profile from "./Components/Profile";
 
 
 
+
 function App() {
   const [currentPage, setCurrentPage] = useState(null);
   const [showRegisterForm, setShowRegisterForm] = useState(false); // Nuevo estado
@@ -28,7 +29,7 @@ function App() {
   useEffect(() => {
     const verificarUsuario = async () => {
       try {
-        const response = await fetch('http://localhost:8081/auth/refresh-token', {
+        const response = await fetch(`${process.env.REACT_APP_PROD_API_URL}/auth/refresh-token`, {
           method: 'POST',
           credentials: 'include'
         });
@@ -170,7 +171,7 @@ function App() {
 
   const handleLogin = async (username, password, onError) => {
     try {
-      const loginResponse = await fetch('http://localhost:8081/auth/login', {
+      const loginResponse = await fetch(`${process.env.REACT_APP_PROD_API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
@@ -241,7 +242,7 @@ function App() {
 
   const handleRegister = async (mail, username, password, setErrorMessage, setLoginError) => {
     try {
-      const response = await fetch('http://localhost:8081/auth/register', {
+      const response = await fetch(`${process.env.REACT_APP_PROD_API_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: mail, username, password })
@@ -274,7 +275,7 @@ function App() {
     const handleUpdateUser = async (updatedUserInfo) => {
         try {
             const userId = user.id; // Asume que tienes el ID del usuario en el estado 'user'
-            const response = await fetch(`http://localhost:8081/users/update/${userId}`, {
+          const response = await fetch(`${process.env.REACT_APP_PROD_API_URL}/users/update/${userId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
