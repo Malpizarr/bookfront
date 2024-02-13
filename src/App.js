@@ -100,6 +100,7 @@ function App() {
       const token = urlParams.get('token'); // Corregido para eliminar el signo de interrogación
 
       if (!token) {
+        console.error('Token no encontrado en la URL');
         return; // Sale temprano si no hay token
       }
 
