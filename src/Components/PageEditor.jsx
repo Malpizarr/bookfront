@@ -249,14 +249,13 @@ function PageEditor({onLogout, onBack}) {
 
         try {
             if (!user.token) {
-                // Si no hay token, hace la petición con las cookies incluidas
                 response = await fetch(`${process.env.REACT_APP_PROD_API_URL}/books/${bookId}/pages`, {
-                    method: 'GET', // Asumiendo que es una operación de obtención
-                    credentials: 'include', // Necesario para incluir cookies en la petición
+                    method: 'GET',
+                    credentials: 'include',
                 });
             } else {
                 // Si hay token, lo incluye en el encabezado de autorización
-                response = await fetch(`\`${process.env.REACT_APP_PROD_API_URL}/books/${bookId}/pages`, {
+                response = await fetch(`${process.env.REACT_APP_PROD_API_URL}/books/${bookId}/pages`, {
                     headers: {'Authorization': `Bearer ${user.token}`},
                 });
             }
