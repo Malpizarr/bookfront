@@ -98,12 +98,12 @@ function BookNavigation({ bookId, onPageChange, onCreatePage, totalPages }) {
                 /> / {totalPages}
             </h2>
             <button onClick={() => changePage(-1)}>
-                Página Anterior
+                Previous Page
             </button>
             <button onClick={() => changePage(1)}
                     onMouseDown={handleMouseDownNext} onMouseUp={handleMouseUpNext}
             >
-                Página Siguiente
+                Next Page
             </button>
         </div>
     );

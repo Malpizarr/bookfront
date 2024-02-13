@@ -35,7 +35,7 @@ function BookFriends({onSelectBook}) {
 
     return (
         <div className="friend-books">
-            <h3>Libros de amigos</h3>
+            <h3>Friends Books</h3>
             {friendBooks.length > 0 ? (
                 friendBooks.map(book => (
                     <div key={book._id} onClick={() => handleSelectBook(book)} className="book-item">
@@ -47,7 +47,7 @@ function BookFriends({onSelectBook}) {
                     </div>
                 ))
             ) : (
-                <p>No se encontraron libros de amigos.</p>
+                <p>No Books to Display :c</p>
             )}
         </div>
     );

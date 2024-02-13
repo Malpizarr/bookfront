@@ -196,7 +196,7 @@ function FriendList({ onLogout }) {
     const updateFriendsOnlineStatus = (onlineFriendsIds) => {
         setFriends(prevFriends => prevFriends.map(friend => ({
             ...friend,
-            status: onlineFriendsIds.includes(friend.friendId) ? 'En línea' : 'Fuera de línea'
+            status: onlineFriendsIds.includes(friend.friendId) ? 'Online' : 'Offline'
         })));
     };
 
@@ -204,7 +204,7 @@ function FriendList({ onLogout }) {
     const sendFriendRequest = async (friendId) => {
         if (!user) return;
         const jwt = user.token;
-        await fetch('http://localhost:8081/api/friendships/createfriendship', {
+        await fetch(`${process.env.REACT_APP_PROD_API_URL}/api/friendships/createfriendship`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${jwt}`,
@@ -219,7 +219,7 @@ function FriendList({ onLogout }) {
     const acceptFriendRequest = async (friendshipId, friendId) => {
         if (!user) return;
         const jwt = user.token;
-        const url = new URL('http://localhost:8081/api/friendships/accept');
+        const url = new URL(`${process.env.REACT_APP_PROD_API_URL}/api/friendships/accept`);
         url.searchParams.append('friendshipId', friendshipId); // Añade friendshipId como parámetro de consulta
 
         await fetch(url, {
@@ -244,7 +244,7 @@ function FriendList({ onLogout }) {
 
         if (!user || !user.token) return;
         try {
-            const response = await fetch(`http://localhost:8081/api/friendships/friends`, {
+            const response = await fetch(`${process.env.REACT_APP_PROD_API_URL}/api/friendships/friends`, {
                 headers: {
                     'Authorization': `Bearer ${user.token}`
                 }
@@ -266,7 +266,7 @@ function FriendList({ onLogout }) {
 
 
     const deleteFriend = async (Id, friendId) => {
-        const url = new URL('http://localhost:8081/api/friendships/deletefriendship');
+        const url = new URL(`${process.env.REACT_APP_PROD_API_URL}/api/friendships/deletefriendship`);
         url.searchParams.append('friendshipId', Id); // Añade friendshipId como parámetro de consulta
         const jwt = user.token;
         await fetch(url, {
@@ -289,8 +289,8 @@ function FriendList({ onLogout }) {
                 <div className="friend-list-cont">
                 <SearchUsers onSendFriendRequest={sendFriendRequest}/>
                 <div className="view-selector">
-                    <button onClick={() => setView('friends')}>Amigos</button>
-                    <button onClick={() => setView('pending')}>Solicitudes Pendientes</button>
+                    <button onClick={() => setView('friends')}>Friends</button>
+                    <button onClick={() => setView('pending')}>Pending</button>
                 </div>
                 {isLoading ?
                     <div className={"loading"}>Loading...</div> : view === 'friends' ? (
@@ -315,7 +315,7 @@ function FriendList({ onLogout }) {
                                 <button onClick={(e) => {
                                     e.stopPropagation();
                                     deleteFriend(friend.id, friend.friendId);
-                                }}>Eliminar
+                                }}>Delete
                                 </button>
                             </div>
                         ))
@@ -344,7 +344,7 @@ function FriendList({ onLogout }) {
                                 <button onClick={(e) => {
                                     e.stopPropagation();
                                     deleteFriend(friend.id, friend.friendId);
-                                }}>Eliminar
+                                }}>Delete
                                 </button>
                             </div>
                         )))

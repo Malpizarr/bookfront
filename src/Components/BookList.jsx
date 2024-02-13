@@ -155,9 +155,9 @@ function BookList({ onSelectBook, onLogout }) {
                         type="text"
                         value={newBook}
                         onChange={(e) => setNewBook(e.target.value)}
-                        placeholder="Título del nuevo libro"
+                        placeholder="New Book Title"
                     />
-                    <button onClick={addNewBook}>Agregar Libro</button>
+                    <button onClick={addNewBook}>New Book</button>
                 </div>
 
                 <button className="logout-button" onClick={onLogout}>Logout</button>
@@ -183,8 +183,8 @@ function BookList({ onSelectBook, onLogout }) {
                                         onChange={handleTitleChange}
                                         autoFocus
                                     />
-                                    <button type="submit">Actualizar</button>
-                                    <button onClick={() => setEditingBookId(null)}>Cancelar</button>
+                                    <button type="submit">Update</button>
+                                    <button onClick={() => setEditingBookId(null)}>Cancel</button>
                                 </form>
                             ) : (
                                 <>
@@ -196,11 +196,11 @@ function BookList({ onSelectBook, onLogout }) {
                                         setEditingBookId(book._id);
                                         setNewBookTitle(book.title);
                                         setNewBookStatus(book.status);
-                                    }}>Editar
+                                    }}>Edit
                                     </button>
                                 </>
                             )}
-                            <button onClick={() => deleteBook(book._id)}>Eliminar</button>
+                            <button onClick={() => deleteBook(book._id)}>Delete</button>
                         </div>
                     ))
                 )}

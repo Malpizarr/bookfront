@@ -1,7 +1,7 @@
 // Components/RegisterForm.js
 import React, { useState, useEffect } from 'react';
 import '../Style/RegisterForm.css';
-import { Link } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Importa íconos de FontAwesome
 
 function RegisterForm({ onRegister, onToggleForms }) {
@@ -11,7 +11,7 @@ function RegisterForm({ onRegister, onToggleForms }) {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-
+    const navigate = useNavigate();
     useEffect(() => {
         let timer;
 
@@ -44,7 +44,11 @@ function RegisterForm({ onRegister, onToggleForms }) {
     };
 
     const handleOAuthRegister = () => {
-        window.location.href = `${process.env.REACT_APP_PROD_API_URL}/oauth2/authorization/google`;
+        window.location.href = `https://bookauth.onrender.com/oauth2/authorization/google`;
+    };
+
+    const handleBack = () => {
+        navigate('/');
     };
 
 
@@ -69,25 +73,27 @@ function RegisterForm({ onRegister, onToggleForms }) {
 
 
     return (
+        <>
+            <button className="back-button-register" onClick={handleBack}>Back</button>
         <div className="register-form-container">
-            <h2>Registro</h2>
+            <h2>Register</h2>
             <form onSubmit={handleSubmit}>
                 <input
                     type="email"
-                    placeholder="Correo electrónico"
+                    placeholder="Email"
                     value={mail}
                     onChange={(e) => setMail(e.target.value)}
                 />
                 <input
                     type="text"
-                    placeholder="Nombre de usuario"
+                    placeholder="Username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                 />
                 <div className="password-container">
                     <input
                         type={showPassword ? "text" : "password"}
-                        placeholder="Contraseña"
+                        placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
@@ -100,7 +106,7 @@ function RegisterForm({ onRegister, onToggleForms }) {
                 <div className="password-container">
                     <input
                         type={showPassword ? "text" : "password"}
-                        placeholder="Confirmar contraseña"
+                        placeholder="Confirm password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                     />
@@ -113,13 +119,14 @@ function RegisterForm({ onRegister, onToggleForms }) {
                 <button type="button" onClick={() => {
                     handleOAuthRegister();
                 }}>
-                    Registrarse con Google
+                    Register with Google
                 </button>
                 {errorMessage && <div className="error-message">{errorMessage}</div>}
-                <button type="submit">Registrarse</button>
+                <button type="submit">Register</button>
             </form>
-            <Link to="/login" className="link-button-register">¿Ya tienes cuenta? Inicia sesión aquí</Link>
+            <Link to="/login" className="link-button-register">Already Signed Up? Sign In here</Link>
         </div>
+        </>
     );
 }
 

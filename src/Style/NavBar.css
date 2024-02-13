@@ -45,17 +45,23 @@
     justify-content: space-between;
 }
 
+.navbar-toggle {
+    font-size: 24px;
+    cursor: pointer;
+}
+
 .navbar-item {
+
     margin-left: 20px;
     color: white;
     text-decoration: none;
-    font-size: 18px;
+    font-size: 20px;
     transition: color 0.3s ease;
 }
 
 .navbar-item:hover {
-    color: #ff6347; /* Consistent with brand color */
-    text-decoration: underline; /* Underline for hover state */
+    color: #ff6347;
+    text-decoration: underline;
 }
 
 @media (min-width: 768px) {

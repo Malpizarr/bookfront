@@ -50,7 +50,7 @@ function UploadPhotoForm({ userId }) {
     return (
         <form onSubmit={handleSubmit} className="upload-photo-form">
             <input type="file" onChange={handleFileChange} />
-            <button type="submit">Subir Foto</button>
+            <button type="submit">Upload Photo</button>
         </form>
     );
 }

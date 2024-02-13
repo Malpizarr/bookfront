@@ -68,11 +68,9 @@ function PageEditor({onLogout, onBack}) {
 
             if (!response.ok) {
                 if (response.status === 403 || response.status === 401) {
-                    // Si el servidor responde con un estado 403 Forbidden o 401 Unauthorized,
-                    // maneja específicamente este caso como un libro privado al que el usuario no tiene acceso
                     setIsPrivate(true);
                     setIsOwner(false);
-                    throw new Error('Este libro es privado y no tienes acceso.');
+                    throw new Error('This Book is private.');
                 } else {
                     // Para otros tipos de errores, simplemente notifica que no se pudieron obtener los detalles del libro
                     throw new Error('Failed to fetch book details');
@@ -420,12 +418,12 @@ function PageEditor({onLogout, onBack}) {
 
 
     if (error || (isPrivate && !isOwner)) {
-        let errorMessage = error || "Este libro es privado y solo accesible por el propietario.";
+        let errorMessage = error || "This Book is private.";
         return (
             <div className="error-container">
                 <div className="error-message">{errorMessage}</div>
                 <div className="page-editor-buttons">
-                    <button onClick={onBack} className="page-editor-button">Atrás</button>
+                    <button onClick={onBack} className="page-editor-button">Back</button>
                 </div>
             </div>
         );
@@ -450,15 +448,15 @@ function PageEditor({onLogout, onBack}) {
 
                 <div className="page-editor-header">
                     {isOwner && !isLoading &&
-                        <h2>Editando libro: {book.title}</h2>
+                        <h2>Editing Book: {book.title}</h2>
                     }
                     {!isOwner &&
-                        <h2>Viendo libro: {book.title}</h2>
+                        <h2>Seeing Book: {book.title}</h2>
                     }
                     {isOwner &&
                         <div className="save-status">
                             {saveStatus === 'noGuardadoEdit' &&
-                                <span className="save-status-text">No guardado</span>
+                                <span className="save-status-text">Not Saved</span>
                             }
                             {saveStatus === 'guardado' &&
                                 <span className="save-status-text">Saved</span>
@@ -467,19 +465,19 @@ function PageEditor({onLogout, onBack}) {
                                 <span className="save-status-text">
                         <img
                             src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif"
-                            alt="Guardando..."
+                            alt="Saving..."
                             className="save-status-icon"
                         />
                         Saving...</span>
                             }
                             {saveStatus === 'guardadoerror' &&
-                                <span className="save-status-text">Error al guardar</span>
+                                <span className="save-status-text">Error on Saving</span>
                             }
                         </div>
                     }
                     <div className="page-editor-buttons">
                         <button onClick={onLogout} className="page-editor-button">Logout</button>
-                        <button onClick={onBack} className="page-editor-button">Atrás</button>
+                        <button onClick={onBack} className="page-editor-button">Back</button>
                     </div>
                 </div>
                 <ReactQuill
@@ -493,8 +491,8 @@ function PageEditor({onLogout, onBack}) {
                 />
                 {isOwner &&
                     <div className="page-editor-buttons">
-                        <button onClick={handlePageUpdate} className="page-editor-button">Guardar Cambios</button>
-                        <button onClick={handlePageDelete} className="page-editor-button">Eliminar Página</button>
+                        <button onClick={handlePageUpdate} className="page-editor-button">Save Changes</button>
+                        <button onClick={handlePageDelete} className="page-editor-button">Delete Page</button>
                     </div>
                 }
                 <BookNavigation

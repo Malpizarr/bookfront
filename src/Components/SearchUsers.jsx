@@ -48,7 +48,7 @@ function SearchUsers({onSendFriendRequest}) {
                         <img className="user-photo" src={result.photoUrl} alt="User"/>
                         {result.username}
                         <button className="add-friend-button" onClick={() => onSendFriendRequest(result.id)}>
-                            Agregar Amigo
+                            Add
                         </button>
                     </li>
                 ))}

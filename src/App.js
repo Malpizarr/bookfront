@@ -49,9 +49,9 @@ function App() {
 
 
         if (!webSocket) {
-          const ws = new WebSocket('ws://localhost:8083', data.token);
+          const ws = new WebSocket(process.env.REACT_APP_PROD_WSS_URL, data.token);
           ws.onopen = () => {
-            setWebSocket(ws); // Guarda la conexión en el contexto global
+            setWebSocket(ws);
           }
         } else if (!user) {
           webSocket.close();
@@ -62,12 +62,19 @@ function App() {
       }
     };
 
-    verificarUsuario();
+
+    // Establecer el timeout
+    const timeoutId = setTimeout(() => {
+      verificarUsuario();
+    }, 1000);
+
+    // Función de limpieza para cancelar el timeout si el componente se desmonta
+    return () => clearTimeout(timeoutId);
   }, []);
 
   useEffect(() => {
     if (user) {
-      const ws = new WebSocket('ws://localhost:8083', user.token);
+      const ws = new WebSocket(process.env.REACT_APP_PROD_WSS_URL, user.token);
 
 
       ws.onopen = () => {
@@ -90,43 +97,48 @@ function App() {
   useEffect(() => {
     async function fetchData() {
       const urlParams = new URLSearchParams(window.location.search);
-      const token = urlParams.get('token');
+      const token = urlParams.get('token'); // Corregido para eliminar el signo de interrogación
+
+      if (!token) {
+        return; // Sale temprano si no hay token
+      }
+
       try {
-        if (token) {
-          const jwt = token;
+        const decoded = jwtDecode(token); // Asegúrate de que jwtDecode esté correctamente importado
 
-          const decoded = jwtDecode(jwt);
+        const userData = {
+          id: decoded.sub,
+          username: decoded.username,
+          email: decoded.email,
+          token: token,
+          photoUrl: decoded.photoUrl,
+          isAuthenticated: true
+        };
 
-          const userData = {
-            id: decoded.sub,
-            username: decoded.username,
-            email: decoded.email,
-            token: jwt,
-              photoUrl: decoded.photoUrl,
-              isAuthenticated: true
-          };
+        setUser(userData); // Asume que setUser es una función proporcionada por el contexto o props
 
-          setUser(userData);
+        const ws = new WebSocket(process.env.REACT_APP_PROD_WSS_URL, token);
+        ws.onopen = () => {
+          console.log('Conexión WebSocket establecida');
+          setWebSocket(ws); // Asume que setWebSocket es una función proporcionada por el contexto o props
+        };
 
-          const ws = new WebSocket('ws://localhost:8083', userData.token);
-          ws.onopen = () => {
-            console.log('Conexión WebSocket establecida');
-            setWebSocket(ws); // Guarda la conexión en el contexto global
-          };
+        ws.onerror = (error) => {
+          console.error('Error en la conexión WebSocket:', error);
+        };
 
-          ws.onerror = (error) => {
-            console.error('Error en la conexión WebSocket:', error);
-          }
-        }
       } catch (error) {
         console.error('Error de autenticación:', error);
       }
+
       // Opcional: limpiar la URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }
 
     fetchData();
-  }, []); // Asegúrate de que las dependencias del useEffect estén correctamente especificadas.
+  }, []); // La lista de dependencias está vacía, por lo que este efecto se ejecuta una vez después del primer renderizado
+
+
 
 
 
@@ -209,7 +221,7 @@ function App() {
   const handleLogout = async () => {
     try {
       // Llamada al endpoint de logout
-      await fetch('http://localhost:8081/auth/logout', {
+      await fetch(`${process.env.REACT_APP_PROD_API_URL}/auth/logout`, {
         method: 'POST',
           credentials: 'include'
       });

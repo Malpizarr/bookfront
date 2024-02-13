@@ -163,10 +163,10 @@ function Profile({onUpdateUser, onBack}) {
         <>
             <Navbar/>
             <div className="page-editor-buttons">
-                <button onClick={onBack} className="page-editor-button">Atrás</button>
+                <button onClick={onBack} className="page-editor-button">Back</button>
                 {isCurrentUser && (
                     <button onClick={() => setShowChangePasswordPopup(true)} className="page-editor-button">
-                        Cambiar Contraseña
+                        Change Password
                     </button>
                 )}
             </div>
@@ -174,10 +174,10 @@ function Profile({onUpdateUser, onBack}) {
             {showChangePasswordPopup && (
                 <div className="change-password-overlay">
                     <div className="change-password-popup">
-                        <h3>Cambiar Contraseña</h3>
+                        <h3>Change Password</h3>
                         <form onSubmit={handleChangePassword}>
                             <div className="form-group">
-                                <label>Vieja Contraseña:</label>
+                                <label>Old Password:</label>
                                 <input
                                     type="password"
                                     value={oldPassword}
@@ -185,7 +185,7 @@ function Profile({onUpdateUser, onBack}) {
                                 />
                             </div>
                             <div className="form-group">
-                                <label>Nueva Contraseña:</label>
+                                <label>New Password:</label>
                                 <input
                                     type="password"
                                     value={newPassword}
@@ -193,7 +193,7 @@ function Profile({onUpdateUser, onBack}) {
                                 />
                             </div>
                             <div className="form-group">
-                                <label>Confirmar Nueva Contraseña:</label>
+                                <label>Confirm New Password:</label>
                                 <input
                                     type="password"
                                     value={confirmPassword}
@@ -201,13 +201,13 @@ function Profile({onUpdateUser, onBack}) {
                                 />
                             </div>
                             <div className="change-password-actions">
-                                <button type="submit" className="button-form">Cambiar</button>
+                                <button type="submit" className="button-form">Change</button>
                                 <button
                                     type="button"
                                     onClick={() => setShowChangePasswordPopup(false)}
                                     className="button-form cancel"
                                 >
-                                    Cancelar
+                                    Cancel
                                 </button>
                             </div>
                         </form>
@@ -215,18 +215,18 @@ function Profile({onUpdateUser, onBack}) {
                 </div>
             )}
 
-            <button onClick={onBack} className="profile-button">Atrás</button>
+            <button onClick={onBack} className="profile-button">Back</button>
             <div className="profile-container">
                 <div className="page-editor-buttons">
                 </div>
-                <h2>Perfil de Usuario</h2>
+                <h2>User Profile</h2>
                 {isCurrentUser ? (
                     <>
                         <img className="user-photo" src={profile.photoUrl} alt="Foto de perfil"/>
                         <UploadPhotoForm userId={user.id}/>
                         <form onSubmit={handleSubmit} className="profile-form">
                             <div className="form-group">
-                                <label>Nombre de usuario</label>
+                                <label>Username</label>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -243,17 +243,17 @@ function Profile({onUpdateUser, onBack}) {
                                     onChange={(e) => setProfile({...profile, email: e.target.value})}
                                 />
                             </div>
-                            <button type="submit" className="button-form">Actualizar Perfil</button>
+                            <button type="submit" className="button-form">Update Password</button>
                         </form>
                         {isCurrentUser && (
                             <button onClick={() => setShowChangePasswordPopup(true)} className="button-form">
-                                Cambiar Contraseña
+                                Change Password
                             </button>
                         )}
                     </>
                 ) : (
                     <div className="profile-info">
-                        <p>Nombre de usuario: {profile.username}</p>
+                        <p>Username: {profile.username}</p>
                         <p>Email: {profile.email}</p>
                         <img className="user-photo" src={profile.photoUrl} alt="Foto de perfil"/>
                     </div>

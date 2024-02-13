@@ -171,10 +171,10 @@ function Chat({webSocket, friendId, friendUsername, onClose, friendPhotoUrl, fri
                 </Link>
                 <span className="friend-username">{friendUsername}</span>
                 <div className="friend-status">
-                    {friendStatus === 'En línea' && (
+                    {friendStatus === 'Online' && (
                         <FontAwesomeIcon icon={faCircle} className="status-icon online"/>
                     )}
-                    {friendStatus === 'Fuera de línea' && (
+                    {friendStatus === 'Offline' && (
                         <FontAwesomeIcon icon={faCircle} className="status-icon offline"/>
                     )}
                 </div>

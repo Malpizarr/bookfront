@@ -1,7 +1,7 @@
 // Components/LoginForm.js
 import React, {useEffect, useState} from 'react';
 import '../Style/LoginForm.css';
-import { Link } from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 function LoginForm({ onLogin }) {
@@ -9,6 +9,7 @@ function LoginForm({ onLogin }) {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
         // Limpiar mensaje de error después de 10 segundos
@@ -17,6 +18,10 @@ function LoginForm({ onLogin }) {
             return () => clearTimeout(timer);
         }
     }, [errorMessage]);
+
+    const handleBack = () => {
+        navigate('/');
+    };
 
 
     const handleSubmit = (event) => {
@@ -28,34 +33,34 @@ function LoginForm({ onLogin }) {
         setShowPassword(!showPassword);
     };
 
-    // LoginForm.js
-
     const handleOAuthLogin = () => {
         // Redirecciona para la autenticación con Google
-        window.location.href = `${process.env.REACT_APP_PROD_API_URL}/oauth2/authorization/google`;
+        window.location.href = `https://bookauth.onrender.com/oauth2/authorization/google`;
 
     };
 
     const handleFacebookLogin = () => {
-        window.location.href = `${process.env.REACT_APP_PROD_API_URL}/oauth2/authorization/facebook`;
+        window.location.href = `https://bookauth.onrender.com/oauth2/authorization/facebook`;
     };
 
 
     return (
+        <>
+            <button className="back-button" onClick={handleBack}>Back</button>
         <div className="login-form-container">
-            <h2>Iniciar Sesión</h2>
+            <h2>Login</h2>
             <form onSubmit={handleSubmit}>
                 <input
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Usuario"/>
+                    placeholder="Username or Email"/>
                 <div className="password-container">
                     <input
                         type={showPassword ? "text" : "password"}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Contraseña"/>
+                        placeholder="Password"/>
                     <span className="eye-icon"
                           onMouseDown={togglePasswordVisibility}
                           onMouseUp={togglePasswordVisibility}>
@@ -65,19 +70,20 @@ function LoginForm({ onLogin }) {
                 <button type="button" onClick={() => {
                     handleOAuthLogin();
                 }}>
-                    Iniciar sesión con Google
+                    Login with Google
                 </button>
                 <button type="button" onClick={() => {
                     handleFacebookLogin();
                 }
                 }>
-                    Iniciar sesión con Facebook
+                    Login with Facebook
                 </button>
                 {errorMessage && <p className="error-message">{errorMessage}</p>}
-                <button type="submit">Ingresar</button>
+                <button type="submit">Login</button>
             </form>
-            <Link className="link-button-login" to="/register">¿No tienes cuenta? Regístrate aquí</Link>
+            <Link className="link-button-login" to="/register">You don't have a Account? Sign Up here!</Link>
         </div>
+        </>
     );
 }
 
