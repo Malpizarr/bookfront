@@ -95,16 +95,9 @@ function App() {
 
 
   useEffect(() => {
-    async function fetchData() {
       const urlParams = new URLSearchParams(window.location.search);
-      const token = urlParams.get('token'); // Corregido para eliminar el signo de interrogación
-
-      if (!token) {
-        console.error('Token no encontrado en la URL');
-        return; // Sale temprano si no hay token
-      }
-
-      try {
+    const token = urlParams.get('token');
+    try {
         const decoded = jwtDecode(token); // Asegúrate de que jwtDecode esté correctamente importado
 
         const userData = {
@@ -116,23 +109,12 @@ function App() {
           isAuthenticated: true
         };
 
-        const response = await fetch(`${process.env.REACT_APP_PROD_API_URL}/auth/createRefreshbyBearer`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-
-
-        if (!response.ok) {
-          console.error('Error al obtener el token de refresco');
-        }
         setUser(userData); // Asume que setUser es una función proporcionada por el contexto o props
 
         const ws = new WebSocket(process.env.REACT_APP_PROD_WSS_URL, token);
         ws.onopen = () => {
           console.log('Conexión WebSocket establecida');
-          setWebSocket(ws); // Asume que setWebSocket es una función proporcionada por el contexto o props
+          setWebSocket(ws);
         };
 
         ws.onerror = (error) => {
@@ -143,11 +125,8 @@ function App() {
         console.error('Error de autenticación:', error);
       }
 
-      // Opcional: limpiar la URL
       window.history.replaceState({}, document.title, window.location.pathname);
-    }
-    fetchData();
-  }, []); // La lista de dependencias está vacía, por lo que este efecto se ejecuta una vez después del primer renderizado
+  }, []);
 
 
 
