@@ -256,7 +256,7 @@ function PageEditor({onLogout, onBack}) {
                 });
             } else {
                 // Si hay token, lo incluye en el encabezado de autorización
-                response = await fetch(`http://localhost:8081/books/${bookId}/pages`, {
+                response = await fetch(`\`${process.env.REACT_APP_PROD_API_URL}/books/${bookId}/pages`, {
                     headers: {'Authorization': `Bearer ${user.token}`},
                 });
             }

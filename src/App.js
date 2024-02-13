@@ -116,6 +116,17 @@ function App() {
           isAuthenticated: true
         };
 
+        const response = await fetch(`${process.env.REACT_APP_PROD_API_URL}/auth/createRefreshbyBearer`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+
+        if (!response.ok) {
+          console.error('Error al obtener el token de refresco');
+        }
         setUser(userData); // Asume que setUser es una función proporcionada por el contexto o props
 
         const ws = new WebSocket(process.env.REACT_APP_PROD_WSS_URL, token);
@@ -135,7 +146,6 @@ function App() {
       // Opcional: limpiar la URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }
-
     fetchData();
   }, []); // La lista de dependencias está vacía, por lo que este efecto se ejecuta una vez después del primer renderizado
 
