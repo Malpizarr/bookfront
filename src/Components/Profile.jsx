@@ -243,7 +243,7 @@ function Profile({onUpdateUser, onBack}) {
                                     onChange={(e) => setProfile({...profile, email: e.target.value})}
                                 />
                             </div>
-                            <button type="submit" className="button-form">Update Password</button>
+                            <button type="submit" className="button-form">Update</button>
                         </form>
                         {isCurrentUser && (
                             <button onClick={() => setShowChangePasswordPopup(true)} className="button-form">
