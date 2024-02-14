@@ -38,7 +38,7 @@ function Profile({onUpdateUser, onBack}) {
 
     const fetchUserProfile = async () => {
         try {
-            const endpoint = `http://localhost:8081/users/${username}`;
+            const endpoint = `${process.env.REACT_APP_PROD_API_URL}/users/${username}`;
             try {
                 const response = await fetch(endpoint, {
                     headers: {
@@ -66,7 +66,7 @@ function Profile({onUpdateUser, onBack}) {
 
     const fetchUserProfileUpdate = async (username) => {
         try {
-            const endpoint = `http://localhost:8081/users/${username}`;
+            const endpoint = `${process.env.REACT_APP_PROD_API_URL}/users/${username}`;
             try {
                 const response = await fetch(endpoint, {
                     headers: {
