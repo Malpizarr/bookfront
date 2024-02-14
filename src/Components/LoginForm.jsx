@@ -12,7 +12,6 @@ function LoginForm({ onLogin }) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Limpiar mensaje de error después de 10 segundos
         if (errorMessage) {
             const timer = setTimeout(() => setErrorMessage(''), 10000);
             return () => clearTimeout(timer);
@@ -34,7 +33,6 @@ function LoginForm({ onLogin }) {
     };
 
     const handleOAuthLogin = () => {
-        // Redirecciona para la autenticación con Google
         window.location.href = `https://bookauth-c0fd8fb7a366.herokuapp.com/oauth2/authorization/google`;
 
     };

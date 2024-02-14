@@ -494,12 +494,21 @@ function PageEditor({onLogout, onBack}) {
                         <button onClick={handlePageDelete} className="page-editor-button">Delete Page</button>
                     </div>
                 }
+                {isOwner &&
                 <BookNavigation
                     bookId={bookId}
                     onPageChange={handlePageChange}
                     onCreatePage={createNewPage}
                     totalPages={totalPages}
                 />
+                }
+                {!isOwner &&
+                    <BookNavigation
+                        bookId={bookId}
+                        onPageChange={handlePageChange}
+                        totalPages={totalPages}
+                    />
+                }
             </div>
         </>
     );
