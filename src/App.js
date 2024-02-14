@@ -61,15 +61,7 @@ function App() {
           setUser(null);
       }
     };
-
-
-    // Establecer el timeout
-    const timeoutId = setTimeout(() => {
       verificarUsuario();
-    }, 3000);
-
-    // Función de limpieza para cancelar el timeout si el componente se desmonta
-    return () => clearTimeout(timeoutId);
   }, []);
 
   useEffect(() => {
