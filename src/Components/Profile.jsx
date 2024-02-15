@@ -51,8 +51,8 @@ function Profile({onUpdateUser, onBack}) {
                 const data = await response.json();
                 setProfile({
                     username: data.username,
-                    email: data.Email, // Asegúrate de que el backend envía el email con la clave 'Email'
-                    photoUrl: data.PhotoUrl, // Y la URL de la foto con 'PhotoUrl'
+                    email: data.Email,
+                    photoUrl: data.PhotoUrl,
                 });
             } catch (error) {
                 console.error('Error fetching user profile:', error);
@@ -70,7 +70,6 @@ function Profile({onUpdateUser, onBack}) {
             try {
                 const response = await fetch(endpoint, {
                     headers: {
-                        // Incluye el token de autorización en los headers si es el perfil del usuario actual
                         'Authorization': `Bearer ${user.token}`,
                     },
                 });
@@ -80,8 +79,8 @@ function Profile({onUpdateUser, onBack}) {
                 const data = await response.json();
                 setProfile({
                     username: data.username,
-                    email: data.Email, // Asegúrate de que el backend envía el email con la clave 'Email'
-                    photoUrl: data.PhotoUrl, // Y la URL de la foto con 'PhotoUrl'
+                    email: data.Email,
+                    photoUrl: data.PhotoUrl,
                 });
             } catch (error) {
                 console.error('Error fetching user profile:', error);
