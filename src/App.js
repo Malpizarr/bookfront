@@ -46,17 +46,6 @@ function App() {
           email: userinfo.email,
           photoUrl: userinfo.photoUrl
         });
-
-
-        if (!webSocket) {
-          const ws = new WebSocket(process.env.REACT_APP_PROD_WSS_URL, data.token);
-          ws.onopen = () => {
-            setWebSocket(ws);
-          }
-        } else if (!user) {
-          webSocket.close();
-        }
-
       } catch (error) {
           setUser(null);
       }
@@ -65,7 +54,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (user) {
+    if (user || !webSocket) {
       const ws = new WebSocket(process.env.REACT_APP_PROD_WSS_URL, user.token);
 
 
@@ -101,17 +90,7 @@ function App() {
           isAuthenticated: true
         };
 
-        setUser(userData); // Asume que setUser es una función proporcionada por el contexto o props
-
-        const ws = new WebSocket(process.env.REACT_APP_PROD_WSS_URL, token);
-        ws.onopen = () => {
-          console.log('Conexión WebSocket establecida');
-          setWebSocket(ws);
-        };
-
-        ws.onerror = (error) => {
-          console.error('Error en la conexión WebSocket:', error);
-        };
+      setUser(userData);
 
       } catch (error) {
         console.error('Error de autenticación:', error);

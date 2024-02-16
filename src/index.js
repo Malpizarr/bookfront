@@ -11,10 +11,9 @@ const container = document.getElementById('root');
 // Crea una raíz con createRoot
 const root = createRoot(container);
 
-// Usa la raíz para renderizar tus componentes
 root.render(
     <UserProvider>
-        <WebSocketProvider> {/* Envuelve tu App con WebSocketProvider */}
+        <WebSocketProvider>
             <Router>
                 <App />
             </Router>
