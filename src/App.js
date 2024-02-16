@@ -54,35 +54,34 @@ function App() {
   }, []);
 
   useEffect(() => {
-    // Solo intenta establecer una nueva conexión WebSocket si hay un usuario autenticado y no hay una conexión existente
-    if (user && !webSocket) {
-      let ws;
-      try {
-        // Iniciar una nueva conexión WebSocket usando el token del usuario como protocolo, si es necesario
-        ws = new WebSocket(process.env.REACT_APP_PROD_WSS_URL, [user.token]);
+    let ws; // Define ws fuera del bloque try para asegurar su visibilidad en la función de limpieza
+
+    try {
+      if (user && !webSocket) { // Asegúrate de que user existe y no hay una conexión WebSocket existente
+        ws = new WebSocket(process.env.REACT_APP_PROD_WSS_URL, [user.token]); // La segunda opción es un array de protocolos, asegúrate de que esto es lo que quieres
 
         ws.onopen = () => {
           console.log('Conexión WebSocket abierta');
-          setWebSocket(ws); // Establecer la conexión WebSocket en el estado
+          setWebSocket(ws); // Establece la conexión WebSocket en el estado
         };
 
         ws.onerror = (error) => {
           console.error('Error en la conexión WebSocket:', error);
         };
-
-      } catch (error) {
-        console.error('Error al establecer la conexión WebSocket:', error);
       }
-
-      // Función de limpieza: se llama cuando el componente se desmonta o el estado del usuario cambia
-      return () => {
-        if (ws) {
-          ws.close(); // Cerrar la conexión WebSocket
-          console.log('Conexión WebSocket cerrada por useEffect');
-        }
-      };
+    } catch (error) {
+      console.error('Error al inicializar la conexión WebSocket:', error);
     }
-  }, [user, webSocket, setWebSocket]); // Dependencias: 'user', 'webSocket', y 'setWebSocket'
+
+    // Función de limpieza
+    return () => {
+      if (ws) {
+        console.log('Cerrando conexión WebSocket');
+        ws.close(); // Cierra la conexión WebSocket
+      }
+    };
+  }, [user, webSocket, setWebSocket]); // Dependencias: user, webSocket, setWebSocket
+
 
 
 
