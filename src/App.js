@@ -54,21 +54,25 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (!user.token) return;
-    if (user || !webSocket) {
-      const ws = new WebSocket(process.env.REACT_APP_PROD_WSS_URL, user.token);
+    try {
+
+      if (user || !webSocket) {
+        const ws = new WebSocket(process.env.REACT_APP_PROD_WSS_URL, user.token);
 
 
-      ws.onopen = () => {
-        setWebSocket(ws);
-      };
+        ws.onopen = () => {
+          setWebSocket(ws);
+        };
 
-      ws.onerror = (error) => {
+        ws.onerror = (error) => {
+          console.error('Error en la conexión WebSocket:', error);
+        }
+      }
+    } catch (error) {
         console.error('Error en la conexión WebSocket:', error);
       }
 
 
-    }
   }, [user]);
 
 
