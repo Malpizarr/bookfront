@@ -54,39 +54,25 @@ function App() {
   }, []);
 
   useEffect(() => {
-    let ws; // Define ws fuera del bloque try para asegurar su visibilidad en la función de limpieza
-
     try {
-      if (user && !webSocket) { // Asegúrate de que user existe y no hay una conexión WebSocket existente
-        ws = new WebSocket(process.env.REACT_APP_PROD_WSS_URL, [user.token]); // La segunda opción es un array de protocolos, asegúrate de que esto es lo que quieres
+      if (user && !webSocket) { // Asegúrate de que el usuario está definido y no hay una conexión WebSocket existente
+        const ws = new WebSocket(process.env.REACT_APP_PROD_WSS_URL, [user.token]); // Iniciar nueva conexión WebSocket
 
         ws.onopen = () => {
           console.log('Conexión WebSocket abierta');
-          setWebSocket(ws); // Establece la conexión WebSocket en el estado
+          setWebSocket(ws); // Almacenar la conexión WebSocket en el estado
         };
 
         ws.onerror = (error) => {
-          console.error('Error en la conexión WebSocket:', error);
+          console.error('Error en la conexión WebSocket:', error); // Manejar errores de la conexión WebSocket
         };
       }
     } catch (error) {
-      console.error('Error al inicializar la conexión WebSocket:', error);
+      console.error('Error al establecer la conexión WebSocket:', error);
     }
 
-    // Función de limpieza
-    return () => {
-      if (ws) {
-        console.log('Cerrando conexión WebSocket');
-        ws.close(); // Cierra la conexión WebSocket
-      }
-    };
+    // No hay función de limpieza aquí, la conexión WebSocket permanecerá abierta
   }, [user, webSocket, setWebSocket]); // Dependencias: user, webSocket, setWebSocket
-
-
-
-
-
-
 
 
   useEffect(() => {
