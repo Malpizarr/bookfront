@@ -54,6 +54,7 @@ function App() {
   }, []);
 
   useEffect(() => {
+    if (!user.token) return;
     if (user || !webSocket) {
       const ws = new WebSocket(process.env.REACT_APP_PROD_WSS_URL, user.token);
 
