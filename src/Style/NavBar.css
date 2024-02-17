@@ -1,5 +1,6 @@
+/* NavBar.css */
 .navbar {
-    background-color: #333; /* Darker shade for elegance */
+    background-color: #333;
     color: white;
     display: flex;
     justify-content: space-between;
@@ -10,24 +11,23 @@
     left: 0;
     right: 0;
     z-index: 100;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* NavBar.css */
+.navbar-user-photo, .ShareSpace-logo {
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
 .navbar-user-photo {
     width: 40px;
     height: 40px;
-    border-radius: 50%;
-    margin-right: 10px;
 }
 
 .ShareSpace-logo {
     width: 60px;
     height: 60px;
-    border-radius: 50%;
-    margin-right: 10px;
 }
-
 
 .navbar-brand {
     display: flex;
@@ -42,16 +42,15 @@
 .navbar-links {
     display: flex;
     align-items: center;
-    justify-content: space-between;
 }
 
 .navbar-toggle {
+    display: none; /* Oculto por defecto */
     font-size: 24px;
     cursor: pointer;
 }
 
 .navbar-item {
-
     margin-left: 20px;
     color: white;
     text-decoration: none;
@@ -64,35 +63,27 @@
     text-decoration: underline;
 }
 
-@media (min-width: 768px) {
-    .navbar-toggle {
-        display: none;
-    }
-    .navbar-links {
-        display: flex;
-    }
-}
-
 @media (max-width: 767px) {
     .navbar-toggle {
-        display: inline-block;
-        margin-left: auto; /* Align to the right */
+        display: inline-block; /* Muestra el botón de menú en pantallas pequeñas */
     }
+
     .navbar-links {
-        display: none;
         flex-direction: column;
         position: absolute;
         top: 100%;
         left: 0;
-        right: 0; /* Cover entire width */
+        right: 0;
         background-color: #333;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        display: none; /* Oculta los enlaces por defecto en pantallas pequeñas */
     }
+
     .navbar-links.active {
-        display: flex;
+        display: flex; /* Muestra los enlaces cuando el menú está activo */
     }
+
     .navbar-item {
-        margin: 10px 0; /* Spacing for mobile view */
-        text-align: center; /* Center align for mobile view */
+        margin: 10px 0;
+        text-align: center;
     }
 }

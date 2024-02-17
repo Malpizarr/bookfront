@@ -446,12 +446,14 @@ function PageEditor({onLogout, onBack}) {
             <div className="page-editor-container">
 
                 <div className="page-editor-header">
+
                     {isOwner && !isLoading &&
                         <h2>Editing Book: {book.title}</h2>
                     }
                     {!isOwner &&
                         <h2>Seeing Book: {book.title}</h2>
                     }
+
                     {isOwner &&
                         <div className="save-status">
                             {saveStatus === 'noGuardadoEdit' &&
@@ -472,6 +474,7 @@ function PageEditor({onLogout, onBack}) {
                             {saveStatus === 'guardadoerror' &&
                                 <span className="save-status-text">Error on Saving</span>
                             }
+
                         </div>
                     }
                     <div className="page-editor-buttons">

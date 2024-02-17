@@ -161,7 +161,7 @@ function BookList({ onSelectBook, onLogout }) {
                 </div>
 
                 <button className="logout-button" onClick={onLogout}>Logout</button>
-                <BookFriends onSelectBook={onSelectBook}/>
+
 
                 {isLoading ? (
                     <div className="loading-container-books">
@@ -169,41 +169,45 @@ function BookList({ onSelectBook, onLogout }) {
                         <div className="loading-message-books">Loading books...</div>
                     </div>
                 ) : (
-                    books.map((book) => (
-                        <div className="book-item" key={book._id}>
-                            {editingBookId === book._id ? (
-                                <form onSubmit={handleUpdateBook}>
-                                    <select value={newBookStatus} onChange={handleStatusChange}>
-                                        <option value="Public">Public</option>
-                                        <option value="Private">Private</option>
-                                    </select>
-                                    <input
-                                        type="text"
-                                        value={newBookTitle}
-                                        onChange={handleTitleChange}
-                                        autoFocus
-                                    />
-                                    <button type="submit">Update</button>
-                                    <button onClick={() => setEditingBookId(null)}>Cancel</button>
-                                </form>
-                            ) : (
-                                <>
-                                    <div onClick={() => selectBook(book)} className="book-item-details">
-                                        <div className="book-item-title">{book.title}</div>
-                                        <div className="book-item-status">{book.status}</div>
-                                    </div>
-                                    <button onClick={() => {
-                                        setEditingBookId(book._id);
-                                        setNewBookTitle(book.title);
-                                        setNewBookStatus(book.status);
-                                    }}>Edit
-                                    </button>
-                                </>
-                            )}
-                            <button onClick={() => deleteBook(book._id)}>Delete</button>
-                        </div>
-                    ))
+                    <div className="books-container">
+                        <h3>Books</h3>
+                        {books.map((book) => (
+                            <div className="book-item" key={book._id}>
+                                {editingBookId === book._id ? (
+                                    <form onSubmit={handleUpdateBook}>
+                                        <select value={newBookStatus} onChange={handleStatusChange}>
+                                            <option value="Public">Public</option>
+                                            <option value="Private">Private</option>
+                                        </select>
+                                        <input
+                                            type="text"
+                                            value={newBookTitle}
+                                            onChange={handleTitleChange}
+                                            autoFocus
+                                        />
+                                        <button type="submit">Update</button>
+                                        <button onClick={() => setEditingBookId(null)}>Cancel</button>
+                                    </form>
+                                ) : (
+                                    <>
+                                        <div onClick={() => selectBook(book)} className="book-item-details">
+                                            <div className="book-item-title">{book.title}</div>
+                                            <div className="book-item-status">{book.status}</div>
+                                        </div>
+                                        <button onClick={() => {
+                                            setEditingBookId(book._id);
+                                            setNewBookTitle(book.title);
+                                            setNewBookStatus(book.status);
+                                        }}>Edit
+                                        </button>
+                                    </>
+                                )}
+                                <button onClick={() => deleteBook(book._id)}>Delete</button>
+                            </div>
+                        ))}
+                    </div>
                 )}
+                <BookFriends onSelectBook={onSelectBook}/>
             </div>
             <div className={`friend-list ${isFriendListVisible ? 'visible' : 'hidden'}`}
                  style={{transform: isFriendListVisible ? 'scale(1)' : 'scale(0)'}}>

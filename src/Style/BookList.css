@@ -181,5 +181,33 @@
     transform: translateY(0); /* El botón regresa a su posición original */
 }
 
+@media (max-width: 768px) {
+    .book-item {
+        width: 100px; /* Hace que .book-item sea más pequeño en pantallas medianas */
+        height: 140px; /* Ajusta la altura proporcionalmente */
+        margin: 5px auto; /* Asegura un margen adecuado alrededor de los elementos */
+    }
+
+    .logout-button {
+        width: auto; /* Permite que el botón se ajuste al contenido, manteniéndolo pequeño */
+        padding: 3px 7px; /* Reduce aún más el padding */
+        font-size: 0.65em; /* Reduce el tamaño de la fuente para un botón más compacto */
+    }
+}
+
+@media (max-width: 480px) {
+    .book-item {
+        width: 90px; /* Reduce aún más el ancho de .book-item para pantallas pequeñas */
+        height: 130px; /* Ajuste proporcional de la altura */
+        margin: 5px auto; /* Mantiene el margen para evitar que los elementos se peguen */
+    }
+
+    .logout-button {
+        padding: 2px 6px; /* Padding mínimo para mantener la funcionalidad del botón */
+        font-size: 0.6em; /* Tamaño de fuente pequeño para un diseño coherente */
+    }
+}
+
+
 
 
