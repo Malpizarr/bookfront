@@ -87,3 +87,12 @@
     margin-left: 10px;
     margin-top: 10px;
 }
+
+@media (max-width: 480px) {
+    .friend-list-cont {
+        z-index: -1;
+    }
+}
+
+
+

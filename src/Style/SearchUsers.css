@@ -10,7 +10,7 @@
 .search-input {
     padding: 10px 15px;
     width: 100%;
-    max-width: 400px; /* Limita el ancho máximo */
+    max-width: 400px;
     border: 1px solid #ccc;
     border-radius: 20px; /* Bordes redondeados */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra ligera */
@@ -24,7 +24,6 @@
 }
 
 .search-button {
-    padding: 10px 20px;
     background-color: #007bff; /* Color de fondo */
     color: #ffffff; /* Color de texto */
     border: none;
@@ -39,31 +38,25 @@
 
 
 .results-list {
-    list-style: none; /* Elimina los estilos predeterminados de lista */
+    list-style: none;
     padding: 0;
     width: 100%;
-    max-width: 600px; /* Limita el ancho máximo */
+    max-width: 600px;
 }
 
 .result-item {
+    padding: 10px;
     display: flex;
     align-items: center;
-    padding: 10px;
     border-bottom: 1px solid #eee; /* Línea divisoria */
     transition: background-color 0.3s ease; /* Transición suave para el fondo */
 }
+
 
 .result-item:hover {
     background-color: #f8f9fa; /* Cambia el fondo al pasar el mouse */
 }
 
-.user-photo {
-    width: 50px; /* Tamaño fijo */
-    height: 50px; /* Tamaño fijo */
-    border-radius: 50%; /* Hace la imagen circular */
-    margin-right: 15px; /* Espacio a la derecha */
-    object-fit: cover; /* Asegura que la imagen cubra el espacio */
-}
 
 .add-friend-button {
     margin-left: auto; /* Empuja el botón a la derecha */
@@ -77,4 +70,12 @@
 
 .add-friend-button:hover {
     background-color: #218838; /* Oscurece el botón al pasar el mouse */
+}
+
+.user-photo-search {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
 }

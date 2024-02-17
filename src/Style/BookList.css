@@ -153,11 +153,11 @@
     position: fixed;
     bottom: 20px;
     right: 20px;
-    padding: 8px; /* Reducido para un botón más pequeño */
-    background-color: #007bff; /* Azul */
+    padding: 8px;
+    background-color: #007bff;
     color: white;
     border: none;
-    border-radius: 50%; /* Círculo perfecto */
+    border-radius: 50%;
     cursor: pointer;
     transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
     font-size: 12px; /* Tamaño de texto más pequeño */
@@ -186,6 +186,10 @@
         width: 100px; /* Hace que .book-item sea más pequeño en pantallas medianas */
         height: 140px; /* Ajusta la altura proporcionalmente */
         margin: 5px auto; /* Asegura un margen adecuado alrededor de los elementos */
+    }
+
+    .friend-list {
+        width: 300px;
     }
 
     .logout-button {

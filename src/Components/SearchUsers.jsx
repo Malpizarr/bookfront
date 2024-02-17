@@ -45,7 +45,7 @@ function SearchUsers({onSendFriendRequest}) {
             <ul className="results-list">
                 {searchResults.map((result) => (
                     <li className="result-item" key={result.id}>
-                        <img className="user-photo" src={result.photoUrl} alt="User"/>
+                        <img className="user-photo-search" src={result.photoUrl} alt="User"/>
                         {result.username}
                         <button className="add-friend-button" onClick={() => onSendFriendRequest(result.id)}>
                             Add
