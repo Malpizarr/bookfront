@@ -1,18 +1,20 @@
+/* Estilos base */
 .landing-page {
-    font-family: 'Helvetica Neue', Arial, sans-serif; /* More modern font */
+    font-family: 'Helvetica Neue', Arial, sans-serif;
     color: #333;
-    line-height: 1.6; /* Improved line spacing for readability */
+    line-height: 1.6;
 }
 
+/* Sección Hero */
 .hero {
     background-color: #007bff;
-    padding: 80px 20px; /* Responsive padding */
+    padding: 80px 20px;
     text-align: center;
-    color: white; /* Enhanced contrast for readability */
+    color: white;
 }
 
 .hero-content {
-    max-width: 600px; /* More focused content area */
+    max-width: 600px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -20,14 +22,14 @@
 }
 
 .hero-image {
-    width: 150px; /* More proportionate size */
+    width: 150px;
     height: 150px;
     border-radius: 50%;
     margin-bottom: 20px;
 }
 
 .hero h1 {
-    font-size: 32px; /* Adjusted for balance */
+    font-size: 32px;
     margin-bottom: 15px;
 }
 
@@ -36,56 +38,47 @@
     margin-bottom: 25px;
 }
 
+/* Botones */
 .button {
     background-color: #dc3545;
-    color: #fff;
-    padding: 12px 25px; /* More clickable area */
+    color: white;
+    padding: 12px 25px;
     border-radius: 5px;
     text-decoration: none;
     font-size: 16px;
-    margin: 5px; /* Uniform margin for spacing */
-    transition: background-color 0.2s; /* Smoother transition */
+    margin: 5px;
+    transition: background-color 0.2s;
 }
 
 .button:hover {
     background-color: #c82333;
 }
 
+/* Características */
 .features {
     background-color: #f8f9fa;
-    padding: 60px 20px; /* Uniform padding */
+    padding: 60px 20px;
 }
 
 .feature-item {
     max-width: 700px;
-    margin: 30px auto; /* Balanced spacing */
+    margin: 30px auto;
     display: flex;
-    flex-direction: column; /* Stack elements on mobile */
+    flex-direction: column;
     align-items: center;
     text-align: center;
 }
 
-@media (min-width: 768px) {
-    .feature-item {
-        flex-direction: row; /* Row layout on larger screens */
-        text-align: left;
-    }
-    .feature-image {
-        width: 250px; /* Adjusted for balance */
-        height: 250px;
-        margin-right: 20px;
-    }
-}
-
 .feature-item h2 {
-    font-size: 24px; /* Adjusted for hierarchy */
+    font-size: 24px;
     margin-bottom: 10px;
 }
 
 .feature-item p {
-    font-size: 16px; /* Adjusted for readability */
+    font-size: 16px;
 }
 
+/* Testimonios */
 .testimonials {
     background-color: #fff;
     padding: 60px 20px;
@@ -94,22 +87,36 @@
 
 .testimonial-item {
     max-width: 700px;
-    margin: 30px auto; /* Consistent spacing */
-    text-align: center; /* Centered for focus */
+    margin: 30px auto;
+    text-align: center;
 }
 
-.testimonial-item p {
-    font-size: 16px; /* Consistent font sizing */
+.testimonial-item p, .testimonial-item span {
+    font-size: 16px;
     margin-bottom: 10px;
 }
 
-.testimonial-item span {
-    font-size: 16px; /* Consistent font sizing */
-    font-weight: bold;
+/* Media Queries para responsividad */
+@media (max-width: 768px) {
+    .hero-image {
+        width: 120px; /* Tamaño más pequeño para dispositivos medianos */
+        height: 120px; /* Mantiene la proporción */
+    }
+
+    .feature-image {
+        width: 180px; /* Tamaño ajustado para que las imágenes de las características no sean demasiado grandes */
+        height: 180px; /* Mantiene la proporción */
+    }
 }
 
-@media (min-width: 768px) {
-    .testimonial-item {
-        text-align: left; /* Align left on larger screens */
+@media (max-width: 480px) {
+    .hero-image {
+        width: 100px; /* Tamaño más pequeño para dispositivos pequeños */
+        height: 100px; /* Mantiene la proporción */
+    }
+
+    .feature-image {
+        width: 150px; /* Tamaño más pequeño para imágenes de características en dispositivos móviles */
+        height: 150px; /* Mantiene la proporción */
     }
 }

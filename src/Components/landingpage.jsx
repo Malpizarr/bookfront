@@ -13,7 +13,7 @@ function LandingPage() {
             <div className="landing-page">
                 <section className="hero">
                     <div className="hero-content">
-                        <img src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5" alt="Books" className="hero-image"/>
+                        <img src="/images/photo-1568602471122-7832951cc4c5.jpg" alt="Books" className="hero-image"/>
                         <h1>Create, Edit, and Manage Your Books with Ease</h1>
                         <p>Our book editor app provides an intuitive and user-friendly interface for creating, editing, and managing your books. Whether you're a seasoned author or just starting out, our app has everything you need to bring your ideas to life.</p>
                         {user && (
@@ -34,16 +34,19 @@ function LandingPage() {
                 </section>
                 <section className="features">
                     <div className="feature-item">
-                        <img src="https://images.unsplash.com/photo-1581090700227-1e37b190418e" alt="Book" className="feature-image"/>
+                        <img src="/images/photo-1581090700227-1e37b190418e.jpg" alt="Book" className="feature-image"/>
                         <h2>Intuitive Interface</h2>
                         <p>Our app provides an intuitive and user-friendly interface that makes it easy to create and edit your books. Whether you're adding new chapters, editing existing content, or formatting your text, our app has everything you need to get the job done.</p>
                     </div>
                     <div className="feature-item">
-                        <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f" alt="Collaboration" className="feature-image"/>
+                        <img src="/images/photo-1524995997946-a1c2e315a42f.jpg" alt="Collaboration"
+                             className="feature-image"/>
                         <h2>Collaboration Tools</h2>
                         <p>Our app provides collaboration tools that make it easy to work with others on your books. Whether you're working with a co-author, an editor, or a proofreader, our app makes it easy to share your work and collaborate in real-time.</p>
                     </div>
                     <div className="feature-item">
+                        <img src="/images/istockphoto-585488832-1024x1024.jpg" alt="Advanced Features"
+                             className="feature-image"/>
                         <h2>Advanced Features</h2>
                         <p>Our app provides advanced features that help you take your books to the next level. Whether you're adding images, tables, or other multimedia content, our app has everything you need to create professional-looking books that stand out from the crowd.</p>
                     </div>
