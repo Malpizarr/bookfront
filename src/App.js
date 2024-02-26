@@ -55,7 +55,7 @@ function App() {
 
   useEffect(() => {
     try {
-      if (user && !webSocket) { // Asegúrate de que el usuario está definido y no hay una conexión WebSocket existente
+      if (user.token && !webSocket) { // Asegúrate de que el usuario está definido y no hay una conexión WebSocket existente
         const ws = new WebSocket(process.env.REACT_APP_PROD_WSS_URL, [user.token]); // Iniciar nueva conexión WebSocket
 
         ws.onopen = () => {

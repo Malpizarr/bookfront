@@ -48,7 +48,7 @@
     padding: 10px;
     display: flex;
     align-items: center;
-    border-bottom: 1px solid #eee; /* Línea divisoria */
+    border-bottom: 1px solid #eee;
     transition: background-color 0.3s ease; /* Transición suave para el fondo */
 }
 

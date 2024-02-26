@@ -6,6 +6,7 @@ import FriendList from "./FriendsList";
 import BookFriends from "./BookFriends";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faEnvelope} from '@fortawesome/free-solid-svg-icons';
+import {useWebSocket} from "./WebSocketContext";
 
 function BookList({ onSelectBook, onLogout }) {
     const [books, setBooks] = useState([]);
@@ -16,9 +17,29 @@ function BookList({ onSelectBook, onLogout }) {
     const { user } = useUser();
     const [isFriendListVisible, setIsFriendListVisible] = useState(false);
     const [isLoading, setIsloading] = useState(false);
+    const {webSocket, setWebSocket} = useWebSocket();
 
 
+    useEffect(() => {
+        try {
+            if (user.token && !webSocket) { // Asegúrate de que el usuario está definido y no hay una conexión WebSocket existente
+                const ws = new WebSocket(process.env.REACT_APP_PROD_WSS_URL, [user.token]); // Iniciar nueva conexión WebSocket
 
+                ws.onopen = () => {
+                    console.log('Conexión WebSocket abierta');
+                    setWebSocket(ws); // Almacenar la conexión WebSocket en el estado
+                };
+
+                ws.onerror = (error) => {
+                    console.error('Error en la conexión WebSocket:', error); // Manejar errores de la conexión WebSocket
+                };
+            }
+        } catch (error) {
+            console.error('Error al establecer la conexión WebSocket:', error);
+        }
+
+        // No hay función de limpieza aquí, la conexión WebSocket permanecerá abierta
+    }, [user, webSocket, setWebSocket]); // Dependencias: user, webSocket, setWebSocket
 
     useEffect(() => {
         fetchBooks();
