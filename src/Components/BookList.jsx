@@ -38,7 +38,7 @@ function BookList({ onSelectBook, onLogout }) {
             console.error('Error al establecer la conexión WebSocket:', error);
         }
 
-    }, [user, webSocket, setWebSocket]); // Dependencias: user, webSocket, setWebSocket
+    }, [user, webSocket, setWebSocket]);
 
     useEffect(() => {
         fetchBooks();
