@@ -119,7 +119,6 @@ function BookList({ onSelectBook, onLogout }) {
 
 
 
-    // Manejo del cambio de estado del libro
     const handleStatusChange = (e) => {
         setNewBookStatus(e.target.value);
     };
