@@ -38,7 +38,6 @@ function BookList({ onSelectBook, onLogout }) {
             console.error('Error al establecer la conexión WebSocket:', error);
         }
 
-        // No hay función de limpieza aquí, la conexión WebSocket permanecerá abierta
     }, [user, webSocket, setWebSocket]); // Dependencias: user, webSocket, setWebSocket
 
     useEffect(() => {
