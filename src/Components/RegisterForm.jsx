@@ -1,4 +1,4 @@
-// Components/RegisterForm.js
+
 import React, { useState, useEffect } from 'react';
 import '../Style/RegisterForm.css';
 import {Link, useNavigate} from "react-router-dom";

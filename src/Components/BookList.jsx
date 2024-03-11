@@ -23,11 +23,11 @@ function BookList({ onSelectBook, onLogout }) {
     useEffect(() => {
         try {
             if (user.token && !webSocket) { // Asegúrate de que el usuario está definido y no hay una conexión WebSocket existente
-                const ws = new WebSocket(process.env.REACT_APP_PROD_WSS_URL, [user.token]); // Iniciar nueva conexión WebSocket
+                const ws = new WebSocket(process.env.REACT_APP_PROD_WSS_URL, [user.token]);
 
                 ws.onopen = () => {
                     console.log('Conexión WebSocket abierta');
-                    setWebSocket(ws); // Almacenar la conexión WebSocket en el estado
+                    setWebSocket(ws);}
                 };
 
                 ws.onerror = (error) => {
