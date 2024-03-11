@@ -27,7 +27,7 @@ function BookList({ onSelectBook, onLogout }) {
 
                 ws.onopen = () => {
                     console.log('Conexión WebSocket abierta');
-                    setWebSocket(ws);}
+                    setWebSocket(ws);
                 };
 
                 ws.onerror = (error) => {
