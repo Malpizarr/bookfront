@@ -111,7 +111,6 @@ function BookList({ onSelectBook, onLogout }) {
 
 
 
-    // Manejar el cambio de título
     const handleTitleChange = (event) => {
         setNewBookTitle(event.target.value);
     };

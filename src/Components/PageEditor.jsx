@@ -7,13 +7,7 @@ import 'react-quill/dist/quill.snow.css';
 import '../Style/PageEditor.css';
 import Navbar from "./NavBar";
 import {useParams} from "react-router-dom";
-
-
-
-
-
 Quill.register('modules/imageResize', ImageResize);
-
 
 function PageEditor({onLogout, onBack}) {
     const [currentPageContent, setCurrentPageContent] = useState('');
@@ -33,12 +27,39 @@ function PageEditor({onLogout, onBack}) {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [isPrivate, setIsPrivate] = useState(false);
+    const ws = useRef(null);
 
     useEffect(() => {
         if (currentPageNumber > totalPages) {
             setCurrentPageNumber(Math.max(totalPages, 1));
         }
     }, [totalPages, currentPageNumber]);
+
+    useEffect(() => {
+        ws.current = new WebSocket('ws://localhost:8000/ws');
+
+        ws.current.onopen = () => {
+            console.log('WebSocket connection established');
+            ws.current.send(JSON.stringify({ bookId, type: "connect" }));
+        };
+
+        ws.current.onclose = () => {
+            console.log('WebSocket connection closed');
+        };
+
+        ws.current.onmessage = (e) => {
+            const message = JSON.parse(e.data);
+            if (message.bookId === bookId && currentPageContent !== "") {
+                setCurrentPageContent(message.content);
+            }
+        };
+
+
+        return () => {
+            ws.current.close();
+        };
+    }, [book]);
+
 
     useEffect(() => {
         let timer;
@@ -59,7 +80,6 @@ function PageEditor({onLogout, onBack}) {
         try {
             setIsLoading(true);
 
-            // Elige el método apropiado basado en la presencia del token
             const options = user.token ? {headers: {'Authorization': `Bearer ${user.token}`}} : {
                 method: 'GET',
                 credentials: 'include'
@@ -72,23 +92,18 @@ function PageEditor({onLogout, onBack}) {
                     setIsOwner(false);
                     throw new Error('This Book is private.');
                 } else {
-                    // Para otros tipos de errores, simplemente notifica que no se pudieron obtener los detalles del libro
                     throw new Error('Failed to fetch book details');
                 }
             }
 
             const bookData = await response.json();
             setBook(bookData);
-
-            // Verifica si el usuario es el propietario del libro (esto depende de cómo esté estructurado tu objeto bookData)
             const isUserOwner = user.id && bookData.userId && bookData.userId === user.id;
             setIsOwner(isUserOwner);
 
-            // Configura isPrivate basado en el estado del libro y si el usuario es el propietario
             setIsPrivate(bookData.status === 'Private' && !isUserOwner);
         } catch (err) {
             setError(err.message);
-            // Aquí también podrías establecer estados adicionales para mostrar mensajes específicos en la UI si es necesario
         } finally {
             setIsLoading(false);
         }
@@ -138,7 +153,7 @@ function PageEditor({onLogout, onBack}) {
 
     const modules = {
         toolbar: [
-            ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+            ['bold', 'italic', 'underline', 'strike'],
             ['blockquote', 'code-block'],
 
             [{'header': 1}, {'header': 2}],               // custom button values
@@ -150,11 +165,11 @@ function PageEditor({onLogout, onBack}) {
             [{'size': ['small', false, 'large', 'huge']}],  // custom dropdown
             [{'header': [1, 2, 3, 4, 5, 6, false]}],
 
-            [{'color': []}, {'background': []}],          // dropdown with defaults from theme
+            [{'color': []}, {'background': []}],
             [{'font': []}],
             [{'align': []}],
             ['link', 'image'], // Enlace e imagen y video
-            ['clean']                                         // remove formatting button
+            ['clean']
 
         ],
         clipboard: {
@@ -238,7 +253,11 @@ function PageEditor({onLogout, onBack}) {
             setCurrentPageContent(formattedContent);
             setIsContentChanged(true);
             setSaveStatus('noGuardado');
+            if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+                ws.current.send(JSON.stringify({ bookId, content: formattedContent, type: "update" }));
+            }
         }
+
     };
 
 
@@ -488,7 +507,7 @@ function PageEditor({onLogout, onBack}) {
                     value={currentPageContent}
                     readOnly={!isOwner}
                     theme={!isOwner ? 'bubble' : 'snow'}
-                    onChange={handleContentChange}
+                    onChange={isOwner ? handleContentChange : null}
                     modules={isOwner ? modules : {toolbar: false}}
                 />
                 {isOwner &&
@@ -498,12 +517,12 @@ function PageEditor({onLogout, onBack}) {
                     </div>
                 }
                 {isOwner &&
-                <BookNavigation
-                    bookId={bookId}
-                    onPageChange={handlePageChange}
-                    onCreatePage={createNewPage}
-                    totalPages={totalPages}
-                />
+                    <BookNavigation
+                        bookId={bookId}
+                        onPageChange={handlePageChange}
+                        onCreatePage={createNewPage}
+                        totalPages={totalPages}
+                    />
                 }
                 {!isOwner &&
                     <BookNavigation
