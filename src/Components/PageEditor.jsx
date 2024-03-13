@@ -7,7 +7,12 @@ import 'react-quill/dist/quill.snow.css';
 import '../Style/PageEditor.css';
 import Navbar from "./NavBar";
 import {useParams} from "react-router-dom";
+import { useLocation } from 'react-router-dom';
 Quill.register('modules/imageResize', ImageResize);
+
+function useQuery() {
+    return new URLSearchParams(useLocation().search);
+}
 
 function PageEditor({onLogout, onBack}) {
     const [currentPageContent, setCurrentPageContent] = useState('');
@@ -28,6 +33,29 @@ function PageEditor({onLogout, onBack}) {
     const [error, setError] = useState(null);
     const [isPrivate, setIsPrivate] = useState(false);
     const ws = useRef(null);
+    const query = useQuery();
+    const editToken = query.get('editToken');
+    const [showShareDialog, setShowShareDialog] = useState(false);
+
+
+    useEffect(() => {
+        if (editToken) {
+            const options = user.token ? {headers: {'Authorization': `Bearer ${user.token}`}} : {
+                method: 'GET',
+                credentials: 'include'
+            };
+            fetch(`${process.env.REACT_APP_PROD_API_URL}/books/edit/${editToken}`, options)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.isValid) {
+                        setBook(data.book);
+                    } else {
+                        console.log("Token no válido o libro no encontrado");
+                    }
+                })
+                .catch(error => console.error("Error al verificar el token", error));
+        }
+    }, [editToken]);
 
     useEffect(() => {
         if (currentPageNumber > totalPages) {
@@ -36,29 +64,51 @@ function PageEditor({onLogout, onBack}) {
     }, [totalPages, currentPageNumber]);
 
     useEffect(() => {
-        ws.current = new WebSocket('ws://localhost:8000/ws');
+        let shouldReconnect = true;
 
-        ws.current.onopen = () => {
-            console.log('WebSocket connection established');
-            ws.current.send(JSON.stringify({ bookId, type: "connect" }));
-        };
+        function connect() {
+            if (!shouldReconnect) return;
 
-        ws.current.onclose = () => {
-            console.log('WebSocket connection closed');
-        };
-
-        ws.current.onmessage = (e) => {
-            const message = JSON.parse(e.data);
-            if (message.bookId === bookId && currentPageContent !== "") {
-                setCurrentPageContent(message.content);
+            if (ws.current) {
+                ws.current.close();
             }
-        };
 
+            ws.current = new WebSocket('ws://localhost:8000/ws');
+
+            ws.current.onopen = () => {
+                ws.current.send(JSON.stringify({ bookId, type: "connect" }));
+            };
+
+            ws.current.onerror = (error) => {
+                console.error('WebSocket error:', error);
+            };
+
+            ws.current.onclose = () => {
+                if (shouldReconnect) {
+                    setTimeout(connect, 3000);
+                }
+            };
+
+            ws.current.onmessage = (e) => {
+                const message = JSON.parse(e.data);
+                if (message.bookId === bookId && isOwner) {
+                    setCurrentPageContent(message.content);
+                }
+            };
+
+        }
+
+        connect();
 
         return () => {
-            ws.current.close();
+            shouldReconnect = false; // Evita reconectar después de desmontar el componente
+            if (ws.current) {
+                ws.current.close();
+            }
         };
-    }, [book]);
+    }, [bookId, isOwner]); // Solo incluye las dependencias que afectan directamente la necesidad de (re)conectar
+
+
 
 
     useEffect(() => {
@@ -73,6 +123,7 @@ function PageEditor({onLogout, onBack}) {
 
         return () => clearTimeout(timer);
     }, [saveStatus]);
+
 
 
     const fetchBook = async () => {
@@ -98,7 +149,8 @@ function PageEditor({onLogout, onBack}) {
 
             const bookData = await response.json();
             setBook(bookData);
-            const isUserOwner = user.id && bookData.userId && bookData.userId === user.id;
+            const allowedUsers = bookData.allowedUsers || [];
+            const isUserOwner = allowedUsers.includes(user.id);
             setIsOwner(isUserOwner);
 
             setIsPrivate(bookData.status === 'Private' && !isUserOwner);
@@ -226,7 +278,7 @@ function PageEditor({onLogout, onBack}) {
             const quill = quillRef.current.getEditor();
 
             const checkForChanges = () => {
-                if (isContentChanged) { // Solo revisar si hay cambios reales
+                if (isContentChanged) {
                     setSaveStatus('noGuardadoEdit');
 
                     if (saveTimer.current) {
@@ -250,6 +302,7 @@ function PageEditor({onLogout, onBack}) {
     const handleContentChange = (content, delta, source, editor) => {
         if (isOwner) {
             const formattedContent = editor.getHTML();
+            console.log('Contenido actualizado:', formattedContent);
             setCurrentPageContent(formattedContent);
             setIsContentChanged(true);
             setSaveStatus('noGuardado');
@@ -257,8 +310,10 @@ function PageEditor({onLogout, onBack}) {
                 ws.current.send(JSON.stringify({ bookId, content: formattedContent, type: "update" }));
             }
         }
-
     };
+
+
+
 
 
 
@@ -286,12 +341,10 @@ function PageEditor({onLogout, onBack}) {
             const pages = await response.json();
             setTotalPages(pages.length);
 
-            // La siguiente línea se ha movido al final para asegurarse de que se utiliza el valor actualizado de totalPages
             if (currentPageNumber > totalPages) {
                 setCurrentPageNumber(Math.max(totalPages, 1));
             }
 
-            // Guardar el recuento de páginas en localStorage
             localStorage.setItem('totalPages', pages.length);
         } catch (error) {
             console.error('Error al obtener el recuento de páginas:', error);
@@ -302,7 +355,6 @@ function PageEditor({onLogout, onBack}) {
         if (!book || typeof book._id === 'undefined') return;
 
         if (pageCache[currentPageNumber]) {
-            // Usar el contenido del caché si está disponible
             const cachedPage = pageCache[currentPageNumber];
             setCurrentPage({ content: cachedPage });
             setCurrentPageContent(cachedPage);
@@ -330,6 +382,18 @@ function PageEditor({onLogout, onBack}) {
         setCurrentPageNumber(page.pageNumber);
     };
 
+    const copyToClipboard = async () => {
+        const urlToCopy = `${process.env.REACT_APP_PROD_FRONT}/editor/${bookId}?editToken=${book.editToken}`;
+        try {
+            await navigator.clipboard.writeText(urlToCopy);
+            alert('URL copiada al portapapeles');
+        } catch (err) {
+            console.error('Error al copiar la URL:', err);
+        }
+        setShowShareDialog(false);
+    };
+
+
     const createNewPage = async () => {
         try {
             const newPageNumber = currentPageNumber + 1;
@@ -348,7 +412,6 @@ function PageEditor({onLogout, onBack}) {
                 throw new Error('Error al crear la nueva página');
             }
 
-            // Recargar el recuento total de páginas después de la creación exitosa
             await fetchTotalPages();
         } catch (error) {
             console.error('Error al crear nueva página:', error);
@@ -415,7 +478,6 @@ function PageEditor({onLogout, onBack}) {
 
             alert('Página eliminada con éxito');
 
-            // Recargar y actualizar el total de páginas
             await fetchTotalPages();
 
 
@@ -473,6 +535,15 @@ function PageEditor({onLogout, onBack}) {
                         <h2>Seeing Book: {book.title}</h2>
                     }
 
+                    {showShareDialog && (
+                        <div className="share-dialog">
+                            <p>{`${process.env.REACT_APP_PROD_FRONT}/editor/${bookId}?editToken=${book.editToken}`}</p>
+                            <button onClick={copyToClipboard}>Copiar URL</button>
+                            <button onClick={() => setShowShareDialog(false)}>Cerrar</button>
+                        </div>
+                    )}
+
+
                     {isOwner &&
                         <div className="save-status">
                             {saveStatus === 'noGuardadoEdit' &&
@@ -497,6 +568,7 @@ function PageEditor({onLogout, onBack}) {
                         </div>
                     }
                     <div className="page-editor-buttons">
+                        {isOwner && <button onClick={() => setShowShareDialog(true)} className="page-editor-button">Share Book</button>}
                         <button onClick={onLogout} className="page-editor-button">Logout</button>
                         <button onClick={onBack} className="page-editor-button">Back</button>
                     </div>
@@ -507,7 +579,7 @@ function PageEditor({onLogout, onBack}) {
                     value={currentPageContent}
                     readOnly={!isOwner}
                     theme={!isOwner ? 'bubble' : 'snow'}
-                    onChange={isOwner ? handleContentChange : null}
+                    onChange={handleContentChange}
                     modules={isOwner ? modules : {toolbar: false}}
                 />
                 {isOwner &&
