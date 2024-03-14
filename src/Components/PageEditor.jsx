@@ -302,7 +302,6 @@ function PageEditor({onLogout, onBack}) {
     const handleContentChange = (content, delta, source, editor) => {
         if (isOwner) {
             const formattedContent = editor.getHTML();
-            console.log('Contenido actualizado:', formattedContent);
             setCurrentPageContent(formattedContent);
             setIsContentChanged(true);
             setSaveStatus('noGuardado');
@@ -328,7 +327,6 @@ function PageEditor({onLogout, onBack}) {
                     credentials: 'include',
                 });
             } else {
-                // Si hay token, lo incluye en el encabezado de autorización
                 response = await fetch(`${process.env.REACT_APP_PROD_API_URL}/books/${bookId}/pages`, {
                     headers: {'Authorization': `Bearer ${user.token}`},
                 });
