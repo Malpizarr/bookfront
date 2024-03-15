@@ -8,6 +8,7 @@ import '../Style/PageEditor.css';
 import Navbar from "./NavBar";
 import {useParams} from "react-router-dom";
 import { useLocation } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 Quill.register('modules/imageResize', ImageResize);
 
 function useQuery() {
@@ -63,6 +64,16 @@ function PageEditor({onLogout, onBack}) {
         }
     }, [totalPages, currentPageNumber]);
 
+    const applyOperation = (op) => {
+        const quill = quillRef.current.getEditor();
+        if (op.action === "add") {
+            quill.insertText(op.position, op.char, 'silent');
+        } else if (op.action === "delete") {
+            quill.deleteText(op.position, 1, 'silent'); // Asume que cada operación de eliminación afecta a un solo carácter
+        }
+    };
+
+    //--TODO: Arreglar conexion en tiempo real
     useEffect(() => {
         let shouldReconnect = true;
 
@@ -91,23 +102,23 @@ function PageEditor({onLogout, onBack}) {
 
             ws.current.onmessage = (e) => {
                 const message = JSON.parse(e.data);
-                if (message.bookId === bookId && isOwner) {
+                if (message.type === "initial") {
                     setCurrentPageContent(message.content);
+                } else if (message.type === "operation") {
+                    applyOperation(message.op);
                 }
             };
-
-        }
+        };
 
         connect();
 
         return () => {
-            shouldReconnect = false; // Evita reconectar después de desmontar el componente
+            shouldReconnect = false;
             if (ws.current) {
                 ws.current.close();
             }
         };
-    }, [bookId, isOwner]); // Solo incluye las dependencias que afectan directamente la necesidad de (re)conectar
-
+    }, [bookId]);
 
 
 
@@ -161,6 +172,7 @@ function PageEditor({onLogout, onBack}) {
         }
     };
 
+    const generateOperationId = () => uuidv4();
 
     useEffect(() => {
         fetchBook();
@@ -300,16 +312,41 @@ function PageEditor({onLogout, onBack}) {
 
 
     const handleContentChange = (content, delta, source, editor) => {
-        if (isOwner) {
-            const formattedContent = editor.getHTML();
-            setCurrentPageContent(formattedContent);
-            setIsContentChanged(true);
-            setSaveStatus('noGuardado');
-            if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-                ws.current.send(JSON.stringify({ bookId, content: formattedContent, type: "update" }));
-            }
+        if (isOwner && source === 'user') {
+            delta.ops.forEach((op) => {
+                if (op.insert && typeof op.insert === 'string') {
+                    // Descomponer la cadena en caracteres y enviar una operación por cada carácter
+                    [...op.insert].forEach((char, index) => {
+                        ws.current.send(JSON.stringify({
+                            bookId,
+                            type: "operation",
+                            op: {
+                                action: "add",
+                                char: char, // Envía un solo carácter
+                                position: editor.getSelection().index + index, // Ajusta la posición para cada carácter
+                                clientId: user.id,
+                                operationId: generateOperationId(),
+                            }
+                        }));
+                    });
+                } else if (op.delete) {
+                    // No se cambia la lógica para la operación de borrado
+                    ws.current.send(JSON.stringify({
+                        bookId,
+                        type: "operation",
+                        op: {
+                            action: "delete",
+                            position: editor.getSelection().index,
+                            clientId: user.id,
+                            operationId: generateOperationId(),
+                        }
+                    }));
+                }
+            });
         }
     };
+
+
 
 
 
