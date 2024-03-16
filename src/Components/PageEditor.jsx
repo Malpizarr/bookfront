@@ -64,61 +64,49 @@ function PageEditor({onLogout, onBack}) {
         }
     }, [totalPages, currentPageNumber]);
 
-    const applyOperation = (op) => {
-        const quill = quillRef.current.getEditor();
-        if (op.action === "add") {
-            quill.insertText(op.position, op.char, 'silent');
-        } else if (op.action === "delete") {
-            quill.deleteText(op.position, 1, 'silent'); // Asume que cada operación de eliminación afecta a un solo carácter
-        }
-    };
+
 
     //--TODO: Arreglar conexion en tiempo real
     useEffect(() => {
-        let shouldReconnect = true;
-
-        function connect() {
-            if (!shouldReconnect) return;
-
-            if (ws.current) {
-                ws.current.close();
-            }
-
+        function connectWebSocket() {
             ws.current = new WebSocket('ws://localhost:8000/ws');
 
             ws.current.onopen = () => {
-                ws.current.send(JSON.stringify({ bookId, type: "connect" }));
+                console.log('Connected to WebSocket');
+                ws.current.send(JSON.stringify({ type: 'connect', bookId }));
             };
 
-            ws.current.onerror = (error) => {
-                console.error('WebSocket error:', error);
+            ws.current.onmessage = (event) => {
+                const message = JSON.parse(event.data);
+                if (message.type === 'operation' && message.ops && quillRef.current) {
+                    const quill = quillRef.current.getEditor();
+                    message.ops.forEach(op => {
+                        if (op.action === 'insert') {
+                            quill.insertText(op.position, op.content, 'silent');
+                        } else if (op.action === 'delete') {
+                            quill.deleteText(op.position, op.length, 'silent');
+                        } else if (op.action === 'format') {
+                            // Aquí, op.attributes debería ser un objeto que Quill pueda entender
+                            quill.formatText(op.position, op.length, op.attributes, 'silent');
+                        }
+                    });
+                }
             };
 
             ws.current.onclose = () => {
-                if (shouldReconnect) {
-                    setTimeout(connect, 3000);
-                }
+                console.log('Disconnected from WebSocket');
+                setTimeout(connectWebSocket, 3000);
             };
 
-            ws.current.onmessage = (e) => {
-                const message = JSON.parse(e.data);
-                if (message.type === "initial") {
-                    setCurrentPageContent(message.content);
-                } else if (message.type === "operation") {
-                    applyOperation(message.op);
-                }
-            };
-        };
-
-        connect();
-
-        return () => {
-            shouldReconnect = false;
-            if (ws.current) {
+            return () => {
                 ws.current.close();
-            }
-        };
+            };
+        }
+
+        connectWebSocket();
     }, [bookId]);
+
+
 
 
 
@@ -290,7 +278,7 @@ function PageEditor({onLogout, onBack}) {
             const quill = quillRef.current.getEditor();
 
             const checkForChanges = () => {
-                if (isContentChanged) {
+                if (isContentChanged) { // Solo revisar si hay cambios reales
                     setSaveStatus('noGuardadoEdit');
 
                     if (saveTimer.current) {
@@ -307,49 +295,49 @@ function PageEditor({onLogout, onBack}) {
             quill.on('text-change', checkForChanges);
             return () => quill.off('text-change', checkForChanges);
         }
-    }, [quillRef, isContentChanged, currentPageNumber]);
+    }, [isContentChanged, currentPageNumber]);
 
 
+    //TODO: TERMINAR DE ARREGLAR EL CAMBIO DE CONTENIDO, ADEMAS, ARREGLAR EL GUARDADO AUTOMATICO, ADEMAS, ARREGLAR EL CAMBIO DE FORMATO
+    const handleContentChange = (content, delta, source) => {
+        if (source !== 'user') return;
 
-    const handleContentChange = (content, delta, source, editor) => {
-        if (isOwner && source === 'user') {
-            delta.ops.forEach((op) => {
-                if (op.insert && typeof op.insert === 'string') {
-                    // Descomponer la cadena en caracteres y enviar una operación por cada carácter
-                    [...op.insert].forEach((char, index) => {
-                        ws.current.send(JSON.stringify({
-                            bookId,
-                            type: "operation",
-                            op: {
-                                action: "add",
-                                char: char, // Envía un solo carácter
-                                position: editor.getSelection().index + index, // Ajusta la posición para cada carácter
-                                clientId: user.id,
-                                operationId: generateOperationId(),
-                            }
-                        }));
-                    });
-                } else if (op.delete) {
-                    // No se cambia la lógica para la operación de borrado
-                    ws.current.send(JSON.stringify({
-                        bookId,
-                        type: "operation",
-                        op: {
-                            action: "delete",
-                            position: editor.getSelection().index,
-                            clientId: user.id,
-                            operationId: generateOperationId(),
-                        }
-                    }));
-                }
-            });
+
+        let ops = []; // Almacena las operaciones para enviarlas en un solo mensaje
+
+        delta.ops.forEach((deltaOp) => {
+            if (deltaOp.insert) {
+                let position = quillRef.current.getEditor().getLength() - 1 - deltaOp.insert.length;
+                ops.push({
+                    action: 'insert',
+                    content: deltaOp.insert,
+                    position: position,
+                    attributes: deltaOp.attributes || {}
+                });
+            } else if (deltaOp.delete) {
+                ops.push({
+                    action: 'delete',
+                    position: deltaOp.position,
+                    length: deltaOp.delete
+                });
+            } else if (deltaOp.retain && deltaOp.attributes) {
+                ops.push({
+                    action: 'format',
+                    position: deltaOp.retain,
+                    length: Object.keys(deltaOp.attributes).length,
+                    attributes: deltaOp.attributes
+                });
+            }
+        });
+
+        if (ops.length > 0) {
+            ws.current.send(JSON.stringify({
+                type: 'operation',
+                bookId,
+                ops: ops
+            }));
         }
     };
-
-
-
-
-
 
 
 
