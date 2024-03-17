@@ -66,7 +66,7 @@ function PageEditor({onLogout, onBack}) {
 
 
 
-    //--TODO: Arreglar conexion en tiempo real
+    //TODO: TERMINAR DE ARREGLAR EL FORMATEO, ADEMAS, QUEDA PENDIENTE EL AJUSTE DE ELIMINACION
     useEffect(() => {
         function connectWebSocket() {
             ws.current = new WebSocket('ws://localhost:8000/ws');
@@ -86,7 +86,7 @@ function PageEditor({onLogout, onBack}) {
                         } else if (op.action === 'delete') {
                             quill.deleteText(op.position, op.length, 'silent');
                         } else if (op.action === 'format') {
-                            // Aquí, op.attributes debería ser un objeto que Quill pueda entender
+                            console.log('Formatting:', op);
                             quill.formatText(op.position, op.length, op.attributes, 'silent');
                         }
                     });
@@ -323,6 +323,7 @@ function PageEditor({onLogout, onBack}) {
             } else if (deltaOp.retain && deltaOp.attributes) {
                 ops.push({
                     action: 'format',
+                    content: '',
                     position: deltaOp.retain,
                     length: Object.keys(deltaOp.attributes).length,
                     attributes: deltaOp.attributes
