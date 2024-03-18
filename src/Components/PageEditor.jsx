@@ -66,7 +66,7 @@ function PageEditor({onLogout, onBack}) {
 
 
 
-    //TODO: TERMINAR DE ARREGLAR EL FORMATEO, ADEMAS, QUEDA PENDIENTE EL AJUSTE DE ELIMINACION
+    //TODO: TERMINAR DE ARREGLAR FORMATEO DE HEADERS, ETC Y ARREGLAR EL GUARDADO AUTOMATICO
     useEffect(() => {
         function connectWebSocket() {
             ws.current = new WebSocket('ws://localhost:8000/ws');
@@ -75,23 +75,26 @@ function PageEditor({onLogout, onBack}) {
                 console.log('Connected to WebSocket');
                 ws.current.send(JSON.stringify({ type: 'connect', bookId }));
             };
-
             ws.current.onmessage = (event) => {
                 const message = JSON.parse(event.data);
-                if (message.type === 'operation' && message.ops && quillRef.current) {
+                if (message.type === 'operation' && message.pageNumber === currentPageNumber && quillRef.current) {
                     const quill = quillRef.current.getEditor();
                     message.ops.forEach(op => {
                         if (op.action === 'insert') {
-                            quill.insertText(op.position, op.content, 'silent');
+                            if (op.attributes && op.attributes.image) {
+                                quill.clipboard.dangerouslyPasteHTML(op.position, op.content);
+                            } else {
+                                quill.insertText(op.position, op.content, 'silent');
+                            }
                         } else if (op.action === 'delete') {
                             quill.deleteText(op.position, op.length, 'silent');
                         } else if (op.action === 'format') {
-                            console.log('Formatting:', op);
                             quill.formatText(op.position, op.length, op.attributes, 'silent');
                         }
                     });
                 }
             };
+
 
             ws.current.onclose = () => {
                 console.log('Disconnected from WebSocket');
@@ -104,7 +107,7 @@ function PageEditor({onLogout, onBack}) {
         }
 
         connectWebSocket();
-    }, [bookId]);
+    }, [bookId, currentPageNumber]);
 
 
 
@@ -300,61 +303,66 @@ function PageEditor({onLogout, onBack}) {
 
     //TODO: TERMINAR DE ARREGLAR EL CAMBIO DE CONTENIDO, ADEMAS, ARREGLAR EL GUARDADO AUTOMATICO, ADEMAS, ARREGLAR EL CAMBIO DE FORMATO
     const handleContentChange = (content, delta, source) => {
-        if (source !== 'user') return;
+        if (source !== 'user' || !quillRef.current) return;
 
         let ops = [];
-
         const selection = quillRef.current.getEditor().getSelection();
-        let currentPosition = selection ? selection.index-1 : quillRef.current.getEditor().getLength()-1;
+        let currentPosition = selection ? selection.index - 1 : quillRef.current.getEditor().getLength() - 1;
 
         delta.ops.forEach((deltaOp) => {
             if (deltaOp.insert) {
                 if (typeof deltaOp.insert === 'string') {
                     const lines = deltaOp.insert.split('\n');
-
                     lines.forEach((line, index) => {
-                        if (index > 0) {
-                            ops.push({
-                                action: 'insert',
-                                content: '\n',
-                                position: currentPosition+1,
-                                attributes: {}
-                            });
-                            currentPosition += 1;
-                        }
-
                         if (line.length > 0) {
                             ops.push({
                                 action: 'insert',
                                 content: line,
                                 position: currentPosition,
-                                attributes: deltaOp.attributes || {}
+                                attributes: deltaOp.attributes || {},
+                                pageNumber: currentPageNumber,
                             });
                             currentPosition += line.length;
                         }
+                        if (index < lines.length - 1) {
+                            ops.push({
+                                action: 'insert',
+                                content: '\n',
+                                position: currentPosition + 1,
+                                attributes: {},
+                                pageNumber: currentPageNumber,
+                            });
+                            currentPosition += 1;
+                        }
                     });
-                } else {
+                } else if (typeof deltaOp.insert === 'object' && deltaOp.insert.hasOwnProperty('image')) {
+                    // Manejo de inserción de imágenes
+                    let imageUrl = deltaOp.insert.image;
+                    let imageHtml = `<img src="${imageUrl}">`;
                     ops.push({
                         action: 'insert',
-                        content: deltaOp.insert,
-                        position: currentPosition,
-                        attributes: deltaOp.attributes || {}
+                        content: imageHtml,
+                        position: currentPosition-1,
+                        attributes: { image: true },
+                        pageNumber: currentPageNumber,
                     });
-                    currentPosition += 1;
+                    currentPosition += 1; // La imagen se cuenta como un solo carácter en Quill
                 }
             } else if (deltaOp.delete) {
                 ops.push({
                     action: 'delete',
-                    position: currentPosition+1,
-                    length: deltaOp.delete
+                    position: currentPosition + 1,
+                    length: deltaOp.delete,
+                    pageNumber: currentPageNumber,
                 });
-                // La operacion delete no afecta la posicion actual del cursor
             } else if (deltaOp.retain && deltaOp.attributes) {
+                // Manejo de cambios de formato
                 ops.push({
                     action: 'format',
-                    position: currentPosition+1,
+                    position: currentPosition + 1,
                     length: deltaOp.retain,
-                    attributes: deltaOp.attributes
+                    attributes: deltaOp.attributes,
+                    pageNumber: currentPageNumber,
                 });
                 currentPosition += deltaOp.retain;
             }
@@ -364,14 +372,11 @@ function PageEditor({onLogout, onBack}) {
             ws.current.send(JSON.stringify({
                 type: 'operation',
                 bookId,
+                pageNumber: currentPageNumber, // Asegúrate de enviar el número de página actual
                 ops: ops
             }));
         }
     };
-
-
-
-
 
 
 
