@@ -302,32 +302,61 @@ function PageEditor({onLogout, onBack}) {
     const handleContentChange = (content, delta, source) => {
         if (source !== 'user') return;
 
+        let ops = [];
 
-        let ops = []; // Almacena las operaciones para enviarlas en un solo mensaje
+        const selection = quillRef.current.getEditor().getSelection();
+        let currentPosition = selection ? selection.index-1 : quillRef.current.getEditor().getLength()-1;
 
         delta.ops.forEach((deltaOp) => {
             if (deltaOp.insert) {
-                let position = quillRef.current.getEditor().getLength() - 1 - deltaOp.insert.length;
-                ops.push({
-                    action: 'insert',
-                    content: deltaOp.insert,
-                    position: position,
-                    attributes: deltaOp.attributes || {}
-                });
+                if (typeof deltaOp.insert === 'string') {
+                    const lines = deltaOp.insert.split('\n');
+
+                    lines.forEach((line, index) => {
+                        if (index > 0) {
+                            ops.push({
+                                action: 'insert',
+                                content: '\n',
+                                position: currentPosition+1,
+                                attributes: {}
+                            });
+                            currentPosition += 1;
+                        }
+
+                        if (line.length > 0) {
+                            ops.push({
+                                action: 'insert',
+                                content: line,
+                                position: currentPosition,
+                                attributes: deltaOp.attributes || {}
+                            });
+                            currentPosition += line.length;
+                        }
+                    });
+                } else {
+                    ops.push({
+                        action: 'insert',
+                        content: deltaOp.insert,
+                        position: currentPosition,
+                        attributes: deltaOp.attributes || {}
+                    });
+                    currentPosition += 1;
+                }
             } else if (deltaOp.delete) {
                 ops.push({
                     action: 'delete',
-                    position: deltaOp.position,
+                    position: currentPosition+1,
                     length: deltaOp.delete
                 });
+                // La operacion delete no afecta la posicion actual del cursor
             } else if (deltaOp.retain && deltaOp.attributes) {
                 ops.push({
                     action: 'format',
-                    content: '',
-                    position: deltaOp.retain,
-                    length: Object.keys(deltaOp.attributes).length,
+                    position: currentPosition+1,
+                    length: deltaOp.retain,
                     attributes: deltaOp.attributes
                 });
+                currentPosition += deltaOp.retain;
             }
         });
 
@@ -339,6 +368,9 @@ function PageEditor({onLogout, onBack}) {
             }));
         }
     };
+
+
+
 
 
 
