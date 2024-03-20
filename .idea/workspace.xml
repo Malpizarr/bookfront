@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="e0ca0ce4-c873-41ce-a082-f1793203918a" name="Changes" comment="IMPLEMENTED REAL TIME CHANGES BY PAGE, AND FIXED THE DELETE BUGS">
+      <change beforePath="$PROJECT_DIR$/src/Components/PageEditor.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Components/PageEditor.jsx" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Malpizarr&quot;
+  }
+}</component>
+  <component name="GitHubPullRequestState">{
+  &quot;prStates&quot;: []
+}</component>
+  <component name="GitLabMergeRequestsSettings">{}</component>
+  <component name="GithubDefaultAccount">
+    <option name="defaultAccountId" value="3c5fb685-a59c-4f86-acf8-6ba3244d811d" />
+  </component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Malpizarr/bookfront.git&quot;,
+    &quot;accountId&quot;: &quot;3c5fb685-a59c-4f86-acf8-6ba3244d811d&quot;
+  }
+}</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/App.js" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/App.test.js" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/Components/BookFriends.jsx" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/Components/BookList.jsx" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/Components/BookNavigation.jsx" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/Components/Chat.jsx" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/Components/FriendsList.jsx" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/Components/LoginForm.jsx" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/Components/NavBar.jsx" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/Components/PageEditor.jsx" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/Components/PrivateRoute.jsx" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/Components/Profile.jsx" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/src/Components/RegisterForm.jsx" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/Components/SearchUsers.jsx" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/Components/UploadPhotoForm.jsx" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/Components/UserContext.jsx" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/Components/WebSocketContext.jsx" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/Components/handleWebSocketMessage.jsx" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/Components/landingpage.jsx" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/index.js" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/reportWebVitals.js" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="2dWorg14NiRTOSA9Cw52UAPTb3y" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Node.js.index.js.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Feature&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/malpz/Programming/bookfront&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;npm.build.executor&quot;: &quot;Run&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;settings.sync&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="build" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="build" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.build" />
+        <item itemvalue="npm.build" />
+        <item itemvalue="npm.build" />
+        <item itemvalue="npm.build" />
+        <item itemvalue="npm.build" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-1d06a55b98c1-74d2a5396914-JavaScript-WS-241.14494.25" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="e0ca0ce4-c873-41ce-a082-f1793203918a" name="Changes" comment="" />
+      <created>1710133396024</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1710133396024</updated>
+      <workItem from="1710133397041" duration="84000" />
+      <workItem from="1710133489985" duration="333000" />
+      <workItem from="1710133834521" duration="138000" />
+      <workItem from="1710173018794" duration="232000" />
+      <workItem from="1710173261084" duration="21000" />
+      <workItem from="1710173504947" duration="7440000" />
+      <workItem from="1710203319543" duration="4528000" />
+      <workItem from="1710288672663" duration="14090000" />
+      <workItem from="1710327679176" duration="7116000" />
+      <workItem from="1710384343569" duration="424000" />
+      <workItem from="1710384837600" duration="38000" />
+      <workItem from="1710387391644" duration="111000" />
+      <workItem from="1710450740683" duration="4623000" />
+      <workItem from="1710461809357" duration="6425000" />
+      <workItem from="1710475420734" duration="3720000" />
+      <workItem from="1710515366496" duration="2201000" />
+      <workItem from="1710535391448" duration="17183000" />
+      <workItem from="1710623313363" duration="2094000" />
+      <workItem from="1710632228586" duration="12077000" />
+      <workItem from="1710718777598" duration="12191000" />
+      <workItem from="1710783373210" duration="4143000" />
+      <workItem from="1710805405985" duration="9903000" />
+      <workItem from="1710859788320" duration="12000" />
+    </task>
+    <task id="LOCAL-00001" summary="EStructural changes">
+      <option name="closed" value="true" />
+      <created>1710175744280</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1710175744280</updated>
+    </task>
+    <task id="LOCAL-00002" summary="EStructural changes">
+      <option name="closed" value="true" />
+      <created>1710176220122</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1710176220122</updated>
+    </task>
+    <task id="LOCAL-00003" summary="EStructural changes">
+      <option name="closed" value="true" />
+      <created>1710176270660</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1710176270660</updated>
+    </task>
+    <task id="LOCAL-00004" summary="EStructural changes">
+      <option name="closed" value="true" />
+      <created>1710176549443</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1710176549443</updated>
+    </task>
+    <task id="LOCAL-00005" summary="EStructural changes">
+      <option name="closed" value="true" />
+      <created>1710176567197</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1710176567197</updated>
+    </task>
+    <task id="LOCAL-00006" summary="EStructural changes">
+      <option name="closed" value="true" />
+      <created>1710176785059</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1710176785059</updated>
+    </task>
+    <task id="LOCAL-00007" summary="EStructural changes">
+      <option name="closed" value="true" />
+      <created>1710176833706</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1710176833706</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Implemented a New Feature: Users are allowed to write with friends. Functionality still not completely implemented">
+      <option name="closed" value="true" />
+      <created>1710212355800</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1710212355800</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Implemented a new feature, the user can share the link using the button &quot;share&quot; on the editor page">
+      <option name="closed" value="true" />
+      <created>1710306357057</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1710306357057</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Todo: Implement a CRDT to use with the backend">
+      <option name="closed" value="true" />
+      <created>1710387491043</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1710387491043</updated>
+    </task>
+    <task id="LOCAL-00011" summary="CRDT AND OT IMPLEMENTED, MID PRIORITY BUGS IN TODO LIST">
+      <option name="closed" value="true" />
+      <created>1710565477447</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1710565477447</updated>
+    </task>
+    <task id="LOCAL-00012" summary="IMPLEMENTED THE REAL TIME EDIT AND ELIMINATION, TODO TASKS PENDING">
+      <option name="closed" value="true" />
+      <created>1710652198582</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1710652198582</updated>
+    </task>
+    <task id="LOCAL-00013" summary="IMPLEMENTED THE REAL TIME EDIT AND ELIMINATION, FIXED">
+      <option name="closed" value="true" />
+      <created>1710728959660</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1710728959660</updated>
+    </task>
+    <task id="LOCAL-00014" summary="IMPLEMENTED REAL TIME CHANGES BY PAGE, AND FIXED THE DELETE BUGS">
+      <option name="closed" value="true" />
+      <created>1710734470643</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1710734470643</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="EStructural changes" />
+    <MESSAGE value="Implemented a New Feature: Users are allowed to write with friends. Functionality still not completely implemented" />
+    <MESSAGE value="Implemented a new feature, the user can share the link using the button &quot;share&quot; on the editor page" />
+    <MESSAGE value="Todo: Implement a CRDT to use with the backend" />
+    <MESSAGE value="Implemented crdt, real time comm still in todo" />
+    <MESSAGE value="CRDT AND OT IMPLEMENTED, MID PRIORITY BUGS IN TODO LIST" />
+    <MESSAGE value="IMPLEMENTED THE REAL TIME EDIT AND ELIMINATION, TODO TASKS PENDING" />
+    <MESSAGE value="IMPLEMENTED THE REAL TIME EDIT AND ELIMINATION, FIXED" />
+    <MESSAGE value="IMPLEMENTED REAL TIME CHANGES BY PAGE, AND FIXED THE DELETE BUGS" />
+    <option name="LAST_COMMIT_MESSAGE" value="IMPLEMENTED REAL TIME CHANGES BY PAGE, AND FIXED THE DELETE BUGS" />
+  </component>
+</project>
